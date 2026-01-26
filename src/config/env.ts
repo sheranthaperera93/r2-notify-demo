@@ -1,0 +1,36 @@
+interface EnvConfig {
+  wsUrl: string;
+  wsDebug: boolean;
+  wsAutoConnect: boolean;
+  clientId: string;
+}
+
+function getEnvVar(key: string, defaultValue?: string): string {
+  const value = import.meta.env[key];
+  if (value === undefined) {
+    if (defaultValue !== undefined) return defaultValue;
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+}
+
+function getEnvBool(key: string, defaultValue: boolean): boolean {
+  const value = import.meta.env[key];
+  if (value === undefined) return defaultValue;
+  return value === "true" || value === "1";
+}
+
+export const env: EnvConfig = {
+  wsUrl: getEnvVar("VITE_WS_URL"),
+  wsDebug: getEnvBool("VITE_WS_DEBUG", false),
+  wsAutoConnect: getEnvBool("VITE_WS_AUTO_CONNECT", true),
+  clientId: getEnvVar("VITE_CLIENT_ID"),
+};
+
+if (env.wsDebug && import.meta.env.DEV) {
+  console.log("WebSocket Configuration:", {
+    url: env.wsUrl,
+    debug: env.wsDebug,
+    reconnect: env.wsAutoConnect,
+  });
+}
