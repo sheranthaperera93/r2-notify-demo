@@ -22,7 +22,7 @@ const AppContent: React.FC<AppContentProps> = ({
   const { lastError } = useNotifications();
 
   return (
-    <div className="container">
+    <div className="min-h-screen flex flex-col">
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" color="success">
           <Toolbar>
@@ -50,13 +50,15 @@ const AppContent: React.FC<AppContentProps> = ({
 
       <Box
         sx={{
-          flexGrow: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           marginTop: "16px",
           marginLeft: "20px",
           marginRight: "20px",
         }}
       >
-        <div className="main-grid">
+        <Box>
           {/* Connection Form */}
           <ConnectionForm
             clientId={clientId}
@@ -64,7 +66,7 @@ const AppContent: React.FC<AppContentProps> = ({
             setWsUrl={setWsUrl}
             wsUrl={wsUrl}
           />
-        </div>
+        </Box>
       </Box>
     </div>
   );
