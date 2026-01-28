@@ -1,6 +1,6 @@
 import { useNotifications } from "r2-notify-react";
 import React, { useEffect, useState } from "react";
-import { NotificationCenter } from "./NotificationCenter";
+import { NotificationCenter } from "../components/notifications/NotificationCenter";
 
 export const Header: React.FC = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false);

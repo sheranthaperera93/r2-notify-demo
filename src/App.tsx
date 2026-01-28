@@ -1,94 +1,59 @@
 import React, { useState } from "react";
-import { R2NotifyProvider, useNotifications } from "r2-notify-react";
-import "./App.css";
-import ConnectionForm from "./components/ConnectionForm";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
-import NotificationPanel from "./components/notifications/NotificationPanel";
+import { Header } from "./components//Header";
+import { ConnectionPanel } from "./components/notifications/ConnectionPanel";
+import { R2NotifyProvider } from "r2-notify-react";
 import { env } from "./config/env";
 
-interface AppContentProps {
-  wsUrl: string;
-  setWsUrl: (url: string) => void;
-  clientId: string;
-  setClientId: (id: string) => void;
-}
-
-const AppContent: React.FC<AppContentProps> = ({
-  wsUrl,
-  setWsUrl,
-  clientId,
-  setClientId,
-}) => {
-  const { lastError } = useNotifications();
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" color="success">
-          <Toolbar>
-            <Typography variant="h4" sx={{ flexGrow: 1 }}>
-              R2 Notify Test App
-            </Typography>
-            <NotificationPanel />
-          </Toolbar>
-        </AppBar>
-      </Box>
-      <Typography
-        variant="h5"
-        marginTop="10px"
-        marginLeft="20px"
-        marginRight="20px"
-      >
-        Test the r2-notify-react notification system
-      </Typography>
-
-      {lastError && (
-        <Typography variant="h5" className="error-message" marginTop="15px">
-          <strong>Error:</strong> {lastError ? lastError.message : "Unknown"}
-        </Typography>
-      )}
-
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "16px",
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
-        <Box>
-          {/* Connection Form */}
-          <ConnectionForm
-            clientId={clientId}
-            setClientId={setClientId}
-            setWsUrl={setWsUrl}
-            wsUrl={wsUrl}
-          />
-        </Box>
-      </Box>
-    </div>
-  );
-};
-
 const App: React.FC = () => {
-  const [wsUrl, setWsUrl] = useState(env.wsUrl);
-  const [clientId, setClientId] = useState(env.clientId);
+  const [clientId, setClientId] = useState("client-1768563100345");
+  const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
+  const [debug, setDebug] = useState(env.wsDebug);
 
   return (
     <R2NotifyProvider
       url={env.wsUrl}
-      clientId={env.clientId}
-      autoConnect={env.wsAutoConnect}
-      debug={env.wsDebug}
+      clientId={clientId}
+      autoConnect={autoConnect}
+      debug={debug}
     >
-      <AppContent
-        wsUrl={wsUrl}
-        clientId={clientId}
-        setWsUrl={setWsUrl}
-        setClientId={setClientId}
-      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
+
+        <main className="flex-1 container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-semibold text-gray-800">
+                Test the R2 Notify notification system
+              </h1>
+              <p className="text-gray-500">
+                Configure your connection settings below to start receiving
+                real-time alerts.
+              </p>
+            </div>
+
+            <div className="relative">
+              <ConnectionPanel
+                wsUrl={env.wsUrl}
+                clientId={clientId}
+                setClientId={(value) => setClientId(value)}
+                autoConnect={autoConnect}
+                setAutoConnect={() => {
+                  setAutoConnect((prev) => !prev);
+                }}
+                debug={debug}
+                setDebug={() => {
+                  setDebug((prev) => !prev);
+                }}
+              />
+            </div>
+          </div>
+        </main>
+
+        <footer className="py-4 border-t text-center text-xs text-gray-400">
+          &copy; {new Date().getFullYear()} R2 Notify Test Suite. All rights
+          reserved.
+        </footer>
+      </div>
     </R2NotifyProvider>
   );
 };

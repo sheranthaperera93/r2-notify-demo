@@ -1,12 +1,9 @@
 import { NotificationApp, NotificationMessage } from "r2-notify-client";
 import { useNotifications, useNotifyActions } from "r2-notify-react";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  deDuplicateAndSort,
-  groupNotifications,
-} from "../../components/notifications/utils";
-import AppAccordion from "../../components/notifications/AppAccordion";
-import ConfigurationPanel from "../../components/notifications/ConfigurationPanel";
+import { deDuplicateAndSort, groupNotifications } from "./utils";
+import AppAccordion from "./AppAccordion";
+import ConfigurationPanel from "./ConfigurationPanel";
 
 interface NotificationCenterProps {
   onClose: () => void;

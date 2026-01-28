@@ -1,28 +1,27 @@
 import React from "react";
-import { useNotifications } from "r2-notify-react";
+import { useNotifications, useR2Notify } from "r2-notify-react";
 
 interface ConnectionPanelProps {
   wsUrl: string;
-  setWsUrl: (url: string) => void;
   clientId: string;
   setClientId: (clientId: string) => void;
   autoConnect: boolean;
   setAutoConnect: (autoConnect: boolean) => void;
-  onConnect: () => void;
-  onDisconnect: () => void;
+  debug: boolean;
+  setDebug: (debug: boolean) => void;
 }
 
 export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
   wsUrl,
-  setWsUrl,
   clientId,
   setClientId,
   autoConnect,
   setAutoConnect,
-  onConnect,
-  onDisconnect,
+  debug,
+  setDebug,
 }) => {
   const { isConnected } = useNotifications();
+  const { client, actions } = useR2Notify();
 
   const statusColor = {
     true: "text-green-500 bg-green-500",
@@ -75,8 +74,8 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
           <input
             type="text"
             name="url"
+            disabled
             value={wsUrl}
-            onChange={(e) => setWsUrl(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-gray-700"
             placeholder="ws://localhost:8081/ws"
           />
@@ -90,6 +89,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
             type="text"
             name="clientId"
             value={clientId}
+            disabled={isConnected}
             onChange={(e) => setClientId(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-gray-700 font-mono"
             placeholder="client-xxxxxx"
@@ -103,6 +103,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                 type="checkbox"
                 name="autoConnect"
                 checked={autoConnect}
+                disabled={!clientId}
                 onChange={(e) => setAutoConnect(e.target.checked)}
                 className="sr-only"
               />
@@ -117,20 +118,46 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
               Auto Connect
             </span>
           </label>
+          <label className="flex items-center cursor-pointer group">
+            <div className="relative">
+              <input
+                type="checkbox"
+                name="enableDebug"
+                checked={debug}
+                onChange={(e) => setDebug(e.target.checked)}
+                className="sr-only"
+              />
+              <div
+                className={`w-10 h-6 rounded-full transition-colors ${debug ? "bg-green-500" : "bg-gray-300"}`}
+              ></div>
+              <div
+                className={`absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform ${debug ? "translate-x-4" : "translate-x-0"}`}
+              ></div>
+            </div>
+            <span className="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
+              Show Debug Logs
+            </span>
+          </label>
 
           <div className="flex space-x-3">
             {!autoConnect &&
               (isConnected ? (
                 <button
-                  onClick={onDisconnect}
+                  onClick={() => {
+                    console.log("Disconnect button clicked");
+                    actions.disconnect();
+                  }}
                   className="px-6 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium transition-colors focus:ring-2 focus:ring-red-500 outline-none"
                 >
                   Disconnect
                 </button>
               ) : (
                 <button
-                  onClick={onConnect}
-                  disabled={!isConnected}
+                  onClick={() => {
+                    console.log("Connect button clicked, clientId:", clientId);
+                    actions.connect();
+                  }}
+                  disabled={isConnected || !clientId}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-all focus:ring-2 focus:ring-green-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Connect
@@ -141,12 +168,20 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
       </div>
 
       <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-100">
-        <p className="text-xs text-gray-500 leading-relaxed">
-          <span className="font-bold text-gray-700">Note:</span> The WebSocket
-          connection is established automatically when the provider is mounted
-          with <code>autoConnect=true</code>. Uncheck "Auto Connect" to manually
-          control session lifecycle.
-        </p>
+        <div className="mb-2">
+          <span className="font-bold text-gray-700">Notes</span>
+        </div>
+        <ol className="list-decimal list-inside text-xs text-gray-500 leading-relaxed">
+          <li>
+            The WebSocket connection is established automatically when the
+            provider is mounted with <code>autoConnect=true</code>. Uncheck
+            "Auto Connect" to manually control session lifecycle.
+          </li>
+          <li className="mt-2">
+            The show debug logs switch enabled/disables the logs in the console
+            for any activity related to the R2-Notify connection.
+          </li>
+        </ol>
       </div>
     </div>
   );
