@@ -1,5 +1,5 @@
-import React from "react";
-import { useNotifications, useR2Notify } from "r2-notify-react";
+import React, { useState } from "react";
+import { useNotifications, useNotifyClient } from "r2-notify-react";
 
 interface ConnectionPanelProps {
   wsUrl: string;
@@ -21,7 +21,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
   setDebug,
 }) => {
   const { isConnected } = useNotifications();
-  const { client, actions } = useR2Notify();
+  const client = useNotifyClient();
 
   const statusColor = {
     true: "text-green-500 bg-green-500",
@@ -32,6 +32,11 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
     true: "Connected",
     false: "Disconnected",
   }[isConnected + ""];
+
+  const handleDebugToggle = (value: boolean) => {
+    setDebug(value);
+    if (autoConnect) setAutoConnect(false);
+  };
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
@@ -103,7 +108,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                 type="checkbox"
                 name="autoConnect"
                 checked={autoConnect}
-                disabled={!clientId}
+                disabled={!clientId || (isConnected && !autoConnect)}
                 onChange={(e) => setAutoConnect(e.target.checked)}
                 className="sr-only"
               />
@@ -124,7 +129,9 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                 type="checkbox"
                 name="enableDebug"
                 checked={debug}
-                onChange={(e) => setDebug(e.target.checked)}
+                onChange={(e) => {
+                  handleDebugToggle(e.target.checked);
+                }}
                 className="sr-only"
               />
               <div
@@ -144,8 +151,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
               (isConnected ? (
                 <button
                   onClick={() => {
-                    console.log("Disconnect button clicked");
-                    actions.disconnect();
+                    client?.close();
                   }}
                   className="px-6 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium transition-colors focus:ring-2 focus:ring-red-500 outline-none"
                 >
@@ -154,8 +160,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
               ) : (
                 <button
                   onClick={() => {
-                    console.log("Connect button clicked, clientId:", clientId);
-                    actions.connect();
+                    client?.connect();
                   }}
                   disabled={isConnected || !clientId}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-all focus:ring-2 focus:ring-green-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"

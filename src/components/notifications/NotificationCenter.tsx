@@ -190,26 +190,25 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       {!visibleSettings && (
         <div className="flex-1 overflow-y-auto bg-gray-50 custom-scrollbar">
           {grouped.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+            <div className="flex flex-col items-center justify-center py-24 px-10 text-center">
+              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                 <svg
-                  className="w-8 h-8 text-gray-300"
+                  className="w-10 h-10 text-slate-200"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                     d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                   />
                 </svg>
               </div>
-              <p className="text-gray-500 font-medium">No notifications yet</p>
-              <p className="text-xs text-gray-400 mt-1">
-                Connect your WebSocket to receive live updates.
+              <p className="text-slate-900 font-bold text-lg">All caught up!</p>
+              <p className="text-slate-400 text-sm mt-1 leading-relaxed">
+                No new notifications at the moment.
               </p>
             </div>
           ) : (

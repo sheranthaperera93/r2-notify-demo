@@ -21,6 +21,10 @@ export const Header: React.FC = () => {
     setNotificationCount((curr) => curr + 1);
   }, [newNotification]);
 
+  useEffect(() => {
+    if (!isConnected) setNotificationCount(0);
+  }, [isConnected]);
+
   return (
     <header className="bg-[#1b5e20] text-white shadow-md sticky top-0 z-30">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
