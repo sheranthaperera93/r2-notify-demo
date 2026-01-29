@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNotifications, useNotifyClient } from "r2-notify-react";
 
 interface ConnectionPanelProps {
