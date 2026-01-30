@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Header } from "./components//Header";
-import { ConnectionPanel } from "./components/notifications/ConnectionPanel";
+import { ConnectionPanel } from "./components/ConnectionPanel";
 import { R2NotifyProvider } from "r2-notify-react";
 import { env } from "./config/env";
+import DebugLogPanel from "./components/DebugLogPanel";
 
 const App: React.FC = () => {
   const [clientId, setClientId] = useState("client-1768563100345");
@@ -31,7 +32,7 @@ const App: React.FC = () => {
               </p>
             </div>
 
-            <div className="relative">
+            <div className="relative mb-8 space-y-6">
               <ConnectionPanel
                 wsUrl={env.wsUrl}
                 clientId={clientId}
@@ -45,6 +46,7 @@ const App: React.FC = () => {
                   setDebug((prev) => !prev);
                 }}
               />
+              {debug && <DebugLogPanel />}
             </div>
           </div>
         </main>
