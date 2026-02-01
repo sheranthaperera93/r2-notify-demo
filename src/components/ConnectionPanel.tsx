@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNotifications, useNotifyClient } from "r2-notify-react";
 
 interface ConnectionPanelProps {
-  wsUrl: string;
   clientId: string;
   setClientId: (clientId: string) => void;
   autoConnect: boolean;
@@ -12,7 +11,6 @@ interface ConnectionPanelProps {
 }
 
 export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
-  wsUrl,
   clientId,
   setClientId,
   autoConnect,
@@ -37,6 +35,42 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
     setDebug(value);
     if (autoConnect) setAutoConnect(false);
   };
+
+  // Initialize state from URL query parameters on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlClientId = urlParams.get("clientId");
+    const urlAutoConnect = urlParams.get("autoConnect") === "true";
+    const urlDebug = urlParams.get("debug") === "true";
+    if (urlClientId) setClientId(urlClientId);
+    if (urlAutoConnect) setAutoConnect(true);
+    if (urlDebug) setDebug(true);
+  }, []);
+
+  // Sync URL query parameters with state
+  useEffect(() => {
+    const url = new URL(window.location.href);
+
+    if (clientId) {
+      url.searchParams.set("clientId", clientId);
+    } else {
+      url.searchParams.delete("clientId");
+    }
+
+    if (autoConnect) {
+      url.searchParams.set("autoConnect", "true");
+    } else {
+      url.searchParams.delete("autoConnect");
+    }
+
+    if (debug) {
+      url.searchParams.set("debug", "true");
+    } else {
+      url.searchParams.delete("debug");
+    }
+
+    window.history.replaceState({}, "", url);
+  }, [clientId, autoConnect, debug]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
@@ -72,20 +106,6 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <div className="relative">
-          <label className="absolute -top-2.5 left-3 bg-white px-1 text-xs font-medium text-gray-500">
-            WebSocket URL
-          </label>
-          <input
-            type="text"
-            name="url"
-            disabled
-            value={wsUrl}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-gray-700"
-            placeholder="ws://localhost:8081/ws"
-          />
-        </div>
-
         <div className="relative">
           <label className="absolute -top-2.5 left-3 bg-white px-1 text-xs font-medium text-gray-500">
             User ID (Client ID)
@@ -177,6 +197,9 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
           <span className="font-bold text-gray-700">Notes</span>
         </div>
         <ol className="list-decimal list-inside text-xs text-gray-500 leading-relaxed">
+          <li>
+            Enter a user ID (client ID) to initiate the R2 Notify experience
+          </li>
           <li>
             The WebSocket connection is established automatically when the
             provider is mounted with <code>autoConnect=true</code>. Uncheck

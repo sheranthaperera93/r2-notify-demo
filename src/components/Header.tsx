@@ -44,7 +44,7 @@ export const Header: React.FC = () => {
             />
           </svg>
           <span className="text-xl font-bold tracking-tight">
-            R2 Notify Test App
+            R2 Notify Playground
           </span>
         </div>
 

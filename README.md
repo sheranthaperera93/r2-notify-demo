@@ -1,4 +1,4 @@
-# R2 Notify Test App
+# R2 Notify Playground
 
 A sample React application for testing the `r2-notify-react` notification library.
 
@@ -74,7 +74,7 @@ npm run preview
    go run main.go
    ```
 
-2. **Start the Test App**
+2. **Start the Playground**
    ```bash
    npm run dev
    ```

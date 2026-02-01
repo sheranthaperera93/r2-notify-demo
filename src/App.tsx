@@ -6,7 +6,7 @@ import { env } from "./config/env";
 import DebugLogPanel from "./components/DebugLogPanel";
 
 const App: React.FC = () => {
-  const [clientId, setClientId] = useState("client-1768563100345");
+  const [clientId, setClientId] = useState("");
   const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
   const [debug, setDebug] = useState(env.wsDebug);
 
@@ -24,7 +24,7 @@ const App: React.FC = () => {
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="space-y-2">
               <h1 className="text-2xl font-semibold text-gray-800">
-                Test the R2 Notify notification system
+                R2 Notify Notification System
               </h1>
               <p className="text-gray-500">
                 Configure your connection settings below to start receiving
@@ -34,7 +34,6 @@ const App: React.FC = () => {
 
             <div className="relative mb-8 space-y-6">
               <ConnectionPanel
-                wsUrl={env.wsUrl}
                 clientId={clientId}
                 setClientId={(value) => setClientId(value)}
                 autoConnect={autoConnect}
@@ -52,7 +51,7 @@ const App: React.FC = () => {
         </main>
 
         <footer className="py-4 border-t text-center text-xs text-gray-400">
-          &copy; {new Date().getFullYear()} R2 Notify Test Suite. All rights
+          &copy; {new Date().getFullYear()} R2 Notify Playground. All rights
           reserved.
         </footer>
       </div>
