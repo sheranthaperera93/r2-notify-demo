@@ -2,7 +2,6 @@ interface EnvConfig {
   wsUrl: string;
   wsDebug: boolean;
   wsAutoConnect: boolean;
-  clientId: string;
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -24,7 +23,6 @@ export const env: EnvConfig = {
   wsUrl: getEnvVar("VITE_WS_URL"),
   wsDebug: getEnvBool("VITE_WS_DEBUG", false),
   wsAutoConnect: getEnvBool("VITE_WS_AUTO_CONNECT", true),
-  clientId: getEnvVar("VITE_CLIENT_ID"),
 };
 
 if (env.wsDebug && import.meta.env.DEV) {
