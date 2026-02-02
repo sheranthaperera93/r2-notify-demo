@@ -18,7 +18,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
   debug,
   setDebug,
 }) => {
-  const { isConnected } = useNotifications();
+  const { isConnected, lastError } = useNotifications();
   const client = useNotifyClient();
 
   const statusColor = {
@@ -74,6 +74,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
+      <div className="text-red-500">{lastError?.message}</div>
       <div className="flex items-center space-x-3 mb-6">
         <div className="p-2 bg-blue-50 rounded-lg">
           <svg
