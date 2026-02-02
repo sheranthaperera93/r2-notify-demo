@@ -4,6 +4,7 @@ import { ConnectionPanel } from "./components/ConnectionPanel";
 import { R2NotifyProvider } from "r2-notify-react";
 import { env } from "./config/env";
 import DebugLogPanel from "./components/DebugLogPanel";
+import { SendNotificationForm } from "./components/SendNotificationsPanel";
 
 const App: React.FC = () => {
   const [clientId, setClientId] = useState("");
@@ -45,6 +46,7 @@ const App: React.FC = () => {
                   setDebug((prev) => !prev);
                 }}
               />
+              <SendNotificationForm clientId={clientId} />
               {debug && <DebugLogPanel />}
             </div>
           </div>
