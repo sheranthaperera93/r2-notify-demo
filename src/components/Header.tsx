@@ -1,29 +1,64 @@
 import { useNotifications } from "r2-notify-react";
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { NotificationCenter } from "../components/notifications/NotificationCenter";
+import { NotificationApp, NotificationMessage } from "r2-notify-client";
+import { deDuplicateAndSort, groupNotifications } from "./notifications/utils";
 
 export const Header: React.FC = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false);
-  const [notificationCount, setNotificationCount] = useState<number>(0);
+  const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
 
-  const toggleCenter = () => setIsCenterOpen(!isCenterOpen);
+  // Track processed notification IDs to prevent duplicates
+  const processedNewNotificationsRef = useRef<Set<string>>(new Set());
 
   const { listNotifications, newNotification, isConnected } =
     useNotifications();
 
+  // Memoize toggle function
+  const toggleCenter = useCallback(() => setIsCenterOpen((prev) => !prev), []);
+
+  // Handle initial list and bulk updates from listNotifications
   useEffect(() => {
-    const base = Array.isArray(listNotifications) ? listNotifications : [];
-    setNotificationCount(base.length);
+    if (!Array.isArray(listNotifications)) return;
+    setNotifications(listNotifications);
   }, [listNotifications]);
 
+  // Handle new real-time notifications
   useEffect(() => {
     if (!newNotification) return;
-    setNotificationCount((curr) => curr + 1);
+
+    const n = newNotification as NotificationMessage;
+
+    // Only add if we haven't seen this specific newNotification event
+    if (!processedNewNotificationsRef.current.has(n.id)) {
+      processedNewNotificationsRef.current.add(n.id);
+      setNotifications((curr) => [n, ...curr]);
+    }
   }, [newNotification]);
 
+  // Handle disconnect - reset everything
   useEffect(() => {
-    if (!isConnected) setNotificationCount(0);
+    if (!isConnected) {
+      setNotifications([]);
+      processedNewNotificationsRef.current.clear();
+    }
   }, [isConnected]);
+
+  // Deduplicate, sort, and group notifications
+  const groupedNotifications = useMemo<NotificationApp[]>(() => {
+    return groupNotifications(deDuplicateAndSort(notifications));
+  }, [notifications]);
+
+  // Calculate count from deduplicated notifications
+  const notificationCount = useMemo(() => {
+    return deDuplicateAndSort(notifications).length;
+  }, [notifications]);
 
   return (
     <header className="bg-[#1b5e20] text-white shadow-md sticky top-0 z-30">
@@ -85,7 +120,10 @@ export const Header: React.FC = () => {
             className="absolute top-16 right-4 z-50"
             onClick={(e) => e.stopPropagation()}
           >
-            <NotificationCenter onClose={() => setIsCenterOpen(false)} />
+            <NotificationCenter
+              notifications={groupedNotifications}
+              onClose={() => setIsCenterOpen(false)}
+            />
           </div>
         </div>
       )}
