@@ -1,5 +1,6 @@
 interface EnvConfig {
   wsUrl: string;
+  r2NotifySvrUrl: string;
   wsDebug: boolean;
   wsAutoConnect: boolean;
 }
@@ -21,6 +22,7 @@ function getEnvBool(key: string, defaultValue: boolean): boolean {
 
 export const env: EnvConfig = {
   wsUrl: getEnvVar("VITE_WS_URL"),
+  r2NotifySvrUrl: getEnvVar("VITE_R2_NOTIFY_SVR"),
   wsDebug: getEnvBool("VITE_WS_DEBUG", false),
   wsAutoConnect: getEnvBool("VITE_WS_AUTO_CONNECT", true),
 };
