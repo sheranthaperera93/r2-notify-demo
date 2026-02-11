@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNotifications, useNotifyClient } from "r2-notify-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 interface ConnectionPanelProps {
   clientId: string;
@@ -71,6 +72,13 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
 
     window.history.replaceState({}, "", url);
   }, [clientId, autoConnect, debug]);
+
+  const responseMessage = (response: any) => {
+    console.log(response);
+  };
+  const errorMessage = (error: any) => {
+    console.log(error);
+  };
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
@@ -189,6 +197,15 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                   Connect
                 </button>
               ))}
+          </div>
+
+          <div className="flex space-x-3">
+            <GoogleLogin
+              onSuccess={responseMessage}
+              onError={() => {
+                errorMessage("Google login failed");
+              }}
+            />
           </div>
         </div>
       </div>

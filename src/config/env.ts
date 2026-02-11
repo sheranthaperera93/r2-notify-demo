@@ -3,6 +3,7 @@ interface EnvConfig {
   r2NotifySvrUrl: string;
   wsDebug: boolean;
   wsAutoConnect: boolean;
+  googleOAuthClientId: string;
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -25,6 +26,7 @@ export const env: EnvConfig = {
   r2NotifySvrUrl: getEnvVar("VITE_R2_NOTIFY_SVR"),
   wsDebug: getEnvBool("VITE_WS_DEBUG", false),
   wsAutoConnect: getEnvBool("VITE_WS_AUTO_CONNECT", true),
+  googleOAuthClientId: getEnvVar("VITE_GOOGLE_OAUTH_CLIENT_ID"),
 };
 
 if (env.wsDebug && import.meta.env.DEV) {

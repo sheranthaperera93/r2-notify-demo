@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
+    "@react-oauth/google": "^0.13.4",
     "bootstrap": "^5.3.8",
     "r2-notify-client": "file:../r2-notify/packages/r2-notify-client",
     "r2-notify-react": "file:../r2-notify/packages/r2-notify-react",
