@@ -43,6 +43,7 @@ export default function NotificationItem({
         onClick={(e) => e.stopPropagation()}
         onFocus={(e) => e.stopPropagation()}
         sx={{ display: "flex", alignItems: "center", py: 0.5 }}
+         key={`item-${item.appId}-${item.groupKey}-${item.id}`}
       >
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography component="div" noWrap>

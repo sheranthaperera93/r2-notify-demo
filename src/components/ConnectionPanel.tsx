@@ -3,8 +3,6 @@ import { useNotifications, useNotifyClient } from "r2-notify-react";
 import { GoogleLogin } from "@react-oauth/google";
 
 interface ConnectionPanelProps {
-  clientId: string;
-  setClientId: (clientId: string) => void;
   autoConnect: boolean;
   setAutoConnect: (autoConnect: boolean) => void;
   debug: boolean;
@@ -12,8 +10,6 @@ interface ConnectionPanelProps {
 }
 
 export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
-  clientId,
-  setClientId,
   autoConnect,
   setAutoConnect,
   debug,
@@ -40,10 +36,8 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
   // Initialize state from URL query parameters on mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const urlClientId = urlParams.get("clientId");
     const urlAutoConnect = urlParams.get("autoConnect") === "true";
     const urlDebug = urlParams.get("debug") === "true";
-    if (urlClientId) setClientId(urlClientId);
     if (urlAutoConnect) setAutoConnect(true);
     if (urlDebug) setDebug(true);
   }, []);
@@ -51,12 +45,6 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
   // Sync URL query parameters with state
   useEffect(() => {
     const url = new URL(window.location.href);
-
-    if (clientId) {
-      url.searchParams.set("clientId", clientId);
-    } else {
-      url.searchParams.delete("clientId");
-    }
 
     if (autoConnect) {
       url.searchParams.set("autoConnect", "true");
@@ -71,7 +59,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
     }
 
     window.history.replaceState({}, "", url);
-  }, [clientId, autoConnect, debug]);
+  }, [autoConnect, debug]);
 
   const responseMessage = (response: any) => {
     console.log(response);
@@ -115,21 +103,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <div className="relative">
-          <label className="absolute -top-2.5 left-3 bg-white px-1 text-xs font-medium text-gray-500">
-            User ID (Client ID)
-          </label>
-          <input
-            type="text"
-            name="clientId"
-            value={clientId}
-            disabled={isConnected}
-            onChange={(e) => setClientId(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-gray-700 font-mono"
-            placeholder="client-xxxxxx"
-          />
-        </div>
-
+        
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
           <label className="flex items-center cursor-pointer group">
             <div className="relative">
@@ -137,7 +111,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                 type="checkbox"
                 name="autoConnect"
                 checked={autoConnect}
-                disabled={!clientId || (isConnected && !autoConnect)}
+                disabled={(isConnected && !autoConnect)}
                 onChange={(e) => setAutoConnect(e.target.checked)}
                 className="sr-only"
               />
@@ -191,7 +165,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                   onClick={() => {
                     client?.connect();
                   }}
-                  disabled={isConnected || !clientId}
+                  disabled={isConnected}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-all focus:ring-2 focus:ring-green-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Connect
@@ -215,9 +189,6 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
           <span className="font-bold text-gray-700">Notes</span>
         </div>
         <ol className="list-decimal list-inside text-xs text-gray-500 leading-relaxed">
-          <li>
-            Enter a user ID (client ID) to initiate the R2 Notify experience
-          </li>
           <li>
             The WebSocket connection is established automatically when the
             provider is mounted with <code>autoConnect=true</code>. Uncheck

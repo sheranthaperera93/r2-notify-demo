@@ -3,7 +3,7 @@ import { useNotifications } from "r2-notify-react";
 import { env } from "../config/env";
 
 interface SendNotificationFormProps {
-  clientId: string;
+  token: string;
 }
 
 export interface NotificationPayload {
@@ -15,9 +15,8 @@ export interface NotificationPayload {
 }
 
 export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
-  clientId,
+  token,
 }) => {
-  const [targetClientId, setTargetClientId] = useState(clientId);
   const [message, setMessage] = useState("");
   const [groupKey, setGroupKey] = useState("");
   const [appKey, setAppKey] = useState("");
@@ -27,7 +26,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!targetClientId || !message || !groupKey || !appKey) {
+    if (!message || !groupKey || !appKey) {
       return;
     }
 
@@ -35,7 +34,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-User-ID": clientId,
+        Authorization: `Bearer ${token}`,
         "X-App-ID": appKey,
       },
       body: JSON.stringify({
@@ -53,10 +52,6 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
 
     // Optionally clear the form after sending
     setMessage("");
-  };
-
-  const handleSendToSelf = () => {
-    setTargetClientId(clientId);
   };
 
   const statusTypes = [
@@ -112,30 +107,20 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Target User ID (Client ID) */}
-          <div className="relative md:col-span-2">
+          {/* App Key */}
+          <div className="relative">
             <label className="absolute -top-2.5 left-3 bg-white px-1 text-xs font-medium text-gray-500">
-              Target User ID (Client ID)
+              App Key
             </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={targetClientId}
-                onChange={(e) => setTargetClientId(e.target.value)}
-                disabled={!isConnected}
-                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-gray-700 font-mono disabled:bg-gray-50 disabled:cursor-not-allowed"
-                placeholder="client-xxxxxx"
-                required
-              />
-              <button
-                type="button"
-                onClick={handleSendToSelf}
-                disabled={!isConnected || !clientId}
-                className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
-              >
-                Send to Self
-              </button>
-            </div>
+            <input
+              type="text"
+              value={appKey}
+              onChange={(e) => setAppKey(e.target.value)}
+              disabled={!isConnected}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-gray-700 disabled:bg-gray-50 disabled:cursor-not-allowed"
+              placeholder="e.g., my-app"
+              required
+            />
           </div>
 
           {/* Group Key */}
@@ -150,22 +135,6 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
               disabled={!isConnected}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-gray-700 disabled:bg-gray-50 disabled:cursor-not-allowed"
               placeholder="e.g., notifications"
-              required
-            />
-          </div>
-
-          {/* App Key */}
-          <div className="relative">
-            <label className="absolute -top-2.5 left-3 bg-white px-1 text-xs font-medium text-gray-500">
-              App Key
-            </label>
-            <input
-              type="text"
-              value={appKey}
-              onChange={(e) => setAppKey(e.target.value)}
-              disabled={!isConnected}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-gray-700 disabled:bg-gray-50 disabled:cursor-not-allowed"
-              placeholder="e.g., my-app"
               required
             />
           </div>
@@ -235,13 +204,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
         <div className="pt-2">
           <button
             type="submit"
-            disabled={
-              !isConnected ||
-              !targetClientId ||
-              !message ||
-              !groupKey ||
-              !appKey
-            }
+            disabled={!isConnected || !message || !groupKey || !appKey}
             className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-all focus:ring-2 focus:ring-purple-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="flex items-center justify-center space-x-2">

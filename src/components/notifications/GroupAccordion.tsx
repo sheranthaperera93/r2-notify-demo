@@ -56,6 +56,7 @@ export default function GroupAccordion({
         "&:before": { display: "none" },
         "&.Mui-expanded": { margin: 0 },
       }}
+      key={`group-${appId}-${group.groupKey}`}
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
@@ -128,7 +129,7 @@ export default function GroupAccordion({
         {/* Items */}
         {group.items.map((item: NotificationMessage) => (
           <NotificationItem
-            key={item.id}
+            key={`item-${appId}-${group.groupKey}-${item.id}`}
             item={item}
             onMarkRead={onItemRead}
             onDelete={onItemDelete}
