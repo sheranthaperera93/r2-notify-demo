@@ -62,6 +62,7 @@ export default function AppAccordion({
         "&:before": { display: "none" },
         "&.Mui-expanded": { margin: 0 },
       }}
+      key={`notification-app-${app.appId}`}
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}

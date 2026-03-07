@@ -1,43 +1,21 @@
-import { NotificationApp, NotificationMessage } from "r2-notify-client";
-import { useNotifications, useNotifyActions } from "r2-notify-react";
-import React, { useEffect, useMemo, useState } from "react";
-import { deDuplicateAndSort, groupNotifications } from "./utils";
+import { NotificationApp } from "r2-notify-client";
+import { useNotifyActions } from "r2-notify-react";
+import React, { useState } from "react";
 import AppAccordion from "./AppAccordion";
 import ConfigurationPanel from "./ConfigurationPanel";
 
 interface NotificationCenterProps {
   onClose: () => void;
+  notifications: NotificationApp[];
 }
 
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   onClose,
+  notifications,
 }) => {
-  const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
   const [visibleSettings, setVisibleSettings] = useState(false);
 
-  const { listNotifications, newNotification } = useNotifications();
   const actions = useNotifyActions();
-
-  useEffect(() => {
-    const base = Array.isArray(listNotifications) ? listNotifications : [];
-    setNotifications(base);
-  }, [listNotifications]);
-
-  useEffect(() => {
-    if (!newNotification) return;
-    const n = newNotification as NotificationMessage;
-    setNotifications((curr) => [n, ...curr]);
-  }, [newNotification]);
-
-  const allNotifications = useMemo(() => {
-    const base = Array.isArray(listNotifications) ? listNotifications : [];
-    return deDuplicateAndSort([...notifications, ...base]);
-  }, [listNotifications, notifications]);
-
-  const grouped = useMemo<NotificationApp[]>(
-    () => groupNotifications(allNotifications),
-    [allNotifications],
-  );
 
   const handleRefresh = () => actions?.reloadNotifications?.();
 
@@ -189,7 +167,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       {/* Content */}
       {!visibleSettings && (
         <div className="flex-1 overflow-y-auto bg-gray-50 custom-scrollbar">
-          {grouped.length === 0 ? (
+          {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 px-10 text-center">
               <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                 <svg
@@ -213,7 +191,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
-              {grouped.map((app) => (
+              {notifications.map((app) => (
                 <AppAccordion
                   key={`notification-app-${app.appId}`}
                   app={app}

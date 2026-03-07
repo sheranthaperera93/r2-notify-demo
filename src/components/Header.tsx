@@ -1,29 +1,66 @@
 import { useNotifications } from "r2-notify-react";
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { NotificationCenter } from "../components/notifications/NotificationCenter";
+import { NotificationApp, NotificationMessage } from "r2-notify-client";
+import { deDuplicateAndSort, groupNotifications } from "./notifications/utils";
+import { useAuth } from "../context/AuthContext";
 
 export const Header: React.FC = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false);
-  const [notificationCount, setNotificationCount] = useState<number>(0);
+  const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
+  const { signOut } = useAuth();
 
-  const toggleCenter = () => setIsCenterOpen(!isCenterOpen);
+  // Track processed notification IDs to prevent duplicates
+  const processedNewNotificationsRef = useRef<Set<string>>(new Set());
 
   const { listNotifications, newNotification, isConnected } =
     useNotifications();
 
+  // Memoize toggle function
+  const toggleCenter = useCallback(() => setIsCenterOpen((prev) => !prev), []);
+
+  // Handle initial list and bulk updates from listNotifications
   useEffect(() => {
-    const base = Array.isArray(listNotifications) ? listNotifications : [];
-    setNotificationCount(base.length);
+    if (!Array.isArray(listNotifications)) return;
+    setNotifications(listNotifications);
   }, [listNotifications]);
 
+  // Handle new real-time notifications
   useEffect(() => {
     if (!newNotification) return;
-    setNotificationCount((curr) => curr + 1);
+
+    const n = newNotification as NotificationMessage;
+
+    // Only add if we haven't seen this specific newNotification event
+    if (!processedNewNotificationsRef.current.has(n.id)) {
+      processedNewNotificationsRef.current.add(n.id);
+      setNotifications((curr) => [n, ...curr]);
+    }
   }, [newNotification]);
 
+  // Handle disconnect - reset everything
   useEffect(() => {
-    if (!isConnected) setNotificationCount(0);
+    if (!isConnected) {
+      setNotifications([]);
+      processedNewNotificationsRef.current.clear();
+    }
   }, [isConnected]);
+
+  // Deduplicate, sort, and group notifications
+  const groupedNotifications = useMemo<NotificationApp[]>(() => {
+    return groupNotifications(deDuplicateAndSort(notifications));
+  }, [notifications]);
+
+  // Calculate count from deduplicated notifications
+  const notificationCount = useMemo(() => {
+    return deDuplicateAndSort(notifications).length;
+  }, [notifications]);
 
   return (
     <header className="bg-[#1b5e20] text-white shadow-md sticky top-0 z-30">
@@ -48,32 +85,62 @@ export const Header: React.FC = () => {
           </span>
         </div>
 
-        {isConnected && (
-          <button
-            onClick={toggleCenter}
-            className="relative p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
-          >
-            <svg
-              className="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+        <div className="flex items-center space-x-2">
+          {isConnected && (
+            <button
+              onClick={toggleCenter}
+              title={
+                isCenterOpen
+                  ? "Close Notification Panel"
+                  : "Open Notification Panel"
+              }
+              className="relative p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            {notificationCount > 0 && (
-              <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-[#1b5e20]">
-                {notificationCount > 99 ? "99+" : notificationCount}
-              </span>
-            )}
-          </button>
-        )}
+              <svg
+                className="w-7 h-7"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+              {notificationCount > 0 && (
+                <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-[#1b5e20]">
+                  {notificationCount > 99 ? "99+" : notificationCount}
+                </span>
+              )}
+            </button>
+          )}
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={signOut}
+              title="Logout"
+              className="relative p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       {isCenterOpen && (
@@ -85,7 +152,10 @@ export const Header: React.FC = () => {
             className="absolute top-16 right-4 z-50"
             onClick={(e) => e.stopPropagation()}
           >
-            <NotificationCenter onClose={() => setIsCenterOpen(false)} />
+            <NotificationCenter
+              notifications={groupedNotifications}
+              onClose={() => setIsCenterOpen(false)}
+            />
           </div>
         </div>
       )}
