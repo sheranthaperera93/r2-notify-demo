@@ -9,7 +9,6 @@ import { useAuth } from "./context/AuthContext";
 import { LoginPage } from "./components/LoginPage";
 
 const App: React.FC = () => {
-  // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEyMyIsImlhdCI6MTc3MDY1Nzg3NywiZXhwIjoxODAyMTkzODc3LCJuYmYiOjE3NzA2NTc4Nzd9.ATTh9brfbeXLep-wHBNf21NW0nGcq9a63IxKOvGn5pA"
   const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
   const [debug, setDebug] = useState(env.wsDebug);
   const { isAuthenticated, isLoading, token } = useAuth();
