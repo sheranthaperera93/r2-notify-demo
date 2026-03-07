@@ -115,6 +115,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
             <input
               type="text"
               value={appKey}
+              title="Application Key"
               onChange={(e) => setAppKey(e.target.value)}
               disabled={!isConnected}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-gray-700 disabled:bg-gray-50 disabled:cursor-not-allowed"
@@ -130,6 +131,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
             </label>
             <input
               type="text"
+              title="Group Key"
               value={groupKey}
               onChange={(e) => setGroupKey(e.target.value)}
               disabled={!isConnected}
@@ -146,6 +148,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
             </label>
             <textarea
               value={message}
+              title="Notification Message"
               onChange={(e) => setMessage(e.target.value)}
               disabled={!isConnected}
               rows={3}
@@ -164,6 +167,7 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
               {statusTypes.map((type) => (
                 <label
                   key={type.value}
+                  title={type.label + " Notification"}
                   className={`flex-1 cursor-pointer ${!isConnected ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   <input
@@ -203,7 +207,8 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({
         {/* Submit Button */}
         <div className="pt-2">
           <button
-            type="submit"
+            title="Send Notification"
+            type="button"
             disabled={!isConnected || !message || !groupKey || !appKey}
             className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-all focus:ring-2 focus:ring-purple-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNotifications, useNotifyClient } from "r2-notify-react";
-import { GoogleLogin } from "@react-oauth/google";
 
 interface ConnectionPanelProps {
   autoConnect: boolean;
@@ -61,13 +60,6 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
     window.history.replaceState({}, "", url);
   }, [autoConnect, debug]);
 
-  const responseMessage = (response: any) => {
-    console.log(response);
-  };
-  const errorMessage = (error: any) => {
-    console.log(error);
-  };
-
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
       <div className="text-red-500">{lastError?.message}</div>
@@ -103,9 +95,8 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-          <label className="flex items-center cursor-pointer group">
+          <label className="flex items-center cursor-pointer group" title="Toggle Auto Connect">
             <div className="relative">
               <input
                 type="checkbox"
@@ -126,7 +117,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
               Auto Connect
             </span>
           </label>
-          <label className="flex items-center cursor-pointer group">
+          <label className="flex items-center cursor-pointer group" title="Toggle Debug Logs">
             <div className="relative">
               <input
                 type="checkbox"
@@ -156,6 +147,7 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                   onClick={() => {
                     client?.close();
                   }}
+                  title="Disconnect with R2 Notify"
                   className="px-6 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium transition-colors focus:ring-2 focus:ring-red-500 outline-none"
                 >
                   Disconnect
@@ -165,21 +157,13 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
                   onClick={() => {
                     client?.connect();
                   }}
+                  title="Connect with R2 Notify"
                   disabled={isConnected}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-all focus:ring-2 focus:ring-green-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Connect
                 </button>
               ))}
-          </div>
-
-          <div className="flex space-x-3">
-            <GoogleLogin
-              onSuccess={responseMessage}
-              onError={() => {
-                errorMessage("Google login failed");
-              }}
-            />
           </div>
         </div>
       </div>
