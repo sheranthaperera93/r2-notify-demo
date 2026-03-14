@@ -1,9 +1,23 @@
 import { useEffect, useRef, useState } from "react";
+import {
+  CommandLineIcon,
+  TrashIcon,
+  XCircleIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+  WrenchScrewdriverIcon,
+  CircleStackIcon,
+} from "@heroicons/react/24/outline";
+
+interface LogEntry {
+  id: number;
+  level: string;
+  message: string;
+  timestamp: string;
+}
 
 export default function DebugLogPanel() {
-  const [logs, setLogs] = useState<
-    { id: number; level: string; message: string; timestamp: string }[]
-  >([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,15 +36,13 @@ export default function DebugLogPanel() {
         // Format the message properly - serialize objects and concatenate strings
         const formattedMessage = message
           .map((m) => {
-            if (typeof m === "string") {
-              return m;
-            } else if (typeof m === "object" && m !== null) {
-              return JSON.stringify(m, null, 2); // Pretty print objects
-            } else {
-              return String(m);
-            }
+            if (typeof m === "string") return m;
+            else if (typeof m === "object" && m !== null)
+              return JSON.stringify(m, null, 2);
+            else return String(m);
           })
           .join(" ");
+
         setLogs((prevLogs) => [
           ...prevLogs,
           { id, level, message: formattedMessage, timestamp },
@@ -60,88 +72,115 @@ export default function DebugLogPanel() {
     }
   }, [logs]);
 
-  const getLevelStyles = (level: string) => {
-    switch (level) {
-      case "error":
-        return "bg-red-100 text-red-800 border-red-300";
-      case "warn":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "info":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      case "debug":
-        return "bg-purple-100 text-purple-800 border-purple-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
-    }
+  const levelConfig: Record<
+    string,
+    { icon: React.ElementType; badge: string; text: string; row: string }
+  > = {
+    error: {
+      icon: XCircleIcon,
+      badge: "bg-red-50 text-red-600 ring-red-200",
+      text: "text-red-400",
+      row: "bg-red-950/20",
+    },
+    warn: {
+      icon: ExclamationTriangleIcon,
+      badge: "bg-amber-50 text-amber-600 ring-amber-200",
+      text: "text-amber-400",
+      row: "bg-amber-950/10",
+    },
+    info: {
+      icon: InformationCircleIcon,
+      badge: "bg-blue-50 text-blue-600 ring-blue-200",
+      text: "text-blue-400",
+      row: "",
+    },
+    debug: {
+      icon: WrenchScrewdriverIcon,
+      badge: "bg-violet-50 text-violet-600 ring-violet-200",
+      text: "text-violet-400",
+      row: "",
+    },
+    log: {
+      icon: CircleStackIcon,
+      badge: "bg-gray-100 text-gray-500 ring-gray-200",
+      text: "text-gray-500",
+      row: "",
+    },
   };
 
-  const getLevelIcon = (level: string) => {
-    switch (level) {
-      case "error":
-        return "✕";
-      case "warn":
-        return "⚠";
-      case "info":
-        return "ℹ";
-      case "debug":
-        return "⚙";
-      default:
-        return "○";
-    }
-  };
+  const getConfig = (level: string) => levelConfig[level] ?? levelConfig["log"];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-50 rounded-lg">
-            <svg
-              className="w-5 h-5 text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 20H5m2-2h14M5 10l0 7m7-7l0 7m7-7H5M4 17v2a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
+    <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gray-900 ring-1 ring-gray-700">
+            <CommandLineIcon className="w-3.5 h-3.5 text-gray-300" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-800">Debug Console</h2>
+          <span className="text-sm font-semibold text-gray-800 tracking-tight">
+            Debug Console
+          </span>
+          {logs.length > 0 && (
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 ring-1 ring-gray-200">
+              {logs.length}
+            </span>
+          )}
         </div>
+
         <button
           onClick={() => setLogs([])}
-          className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+          disabled={logs.length === 0}
+          title="Clear logs"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
         >
+          <TrashIcon className="w-3.5 h-3.5" />
           Clear
         </button>
       </div>
+
+      {/* Log output */}
       <div
         ref={scrollRef}
-        className="bg-gray-950 rounded-lg p-4 font-mono text-sm h-96 overflow-y-auto"
+        className="bg-gray-950 h-96 overflow-y-auto font-mono text-xs"
       >
         {logs.length === 0 ? (
-          <div className="text-gray-500 text-center py-8">No logs yet...</div>
+          <div className="flex flex-col items-center justify-center h-full gap-2">
+            <CommandLineIcon className="w-8 h-8 text-gray-700" />
+            <span className="text-gray-600">No logs yet…</span>
+          </div>
         ) : (
-          <div className="space-y-2">
-            {logs.map((log) => (
-              <div key={log.id} className="flex gap-3 items-start">
-                <span className="text-gray-500 text-xs shrink-0 pt-0.5">
-                  {log.timestamp}
-                </span>
-                <span
-                  className={`px-2 py-0.5 rounded text-xs font-semibold shrink-0 border ${getLevelStyles(log.level)}`}
+          <div className="divide-y divide-white/4">
+            {logs.map((log) => {
+              const config = getConfig(log.level);
+              const Icon = config.icon;
+              return (
+                <div
+                  key={log.id}
+                  className={`flex gap-3 items-start px-4 py-2.5 ${config.row}`}
                 >
-                  {getLevelIcon(log.level)} {log.level.toUpperCase()}
-                </span>
-                <pre className="text-gray-100 whitespace-pre-wrap break-words flex-1 leading-relaxed">
-                  {log.message}
-                </pre>
-              </div>
-            ))}
+                  {/* Timestamp */}
+                  <span className="text-gray-600 shrink-0 pt-px tabular-nums">
+                    {log.timestamp}
+                  </span>
+
+                  {/* Level badge */}
+                  <span
+                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded ring-1 shrink-0 font-semibold uppercase tracking-wide text-[10px] ${config.badge}`}
+                  >
+                    <Icon className="w-3 h-3" />
+                    {log.level}
+                  </span>
+
+                  {/* Message */}
+                  <pre
+                    className={`whitespace-pre-wrap break-words flex-1 leading-relaxed ${config.text || "text-gray-300"}`}
+                  >
+                    {log.message}
+                  </pre>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

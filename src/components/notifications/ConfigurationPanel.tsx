@@ -1,9 +1,31 @@
+// components/notifications/ConfigurationPanel.tsx
 import React, { useEffect, useState } from "react";
 import { useNotifications, useNotifyActions } from "r2-notify-react";
+import { FingerPrintIcon } from "@heroicons/react/24/outline";
 
 interface Configuration {
   [key: string]: any;
 }
+
+const Toggle: React.FC<{
+  checked: boolean;
+  onChange: (val: boolean) => void;
+}> = ({ checked, onChange }) => (
+  <button
+    role="switch"
+    aria-checked={checked}
+    onClick={() => onChange(!checked)}
+    className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
+      checked ? "bg-emerald-500" : "bg-gray-200"
+    }`}
+  >
+    <span
+      className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+        checked ? "translate-x-[18px]" : "translate-x-[3px]"
+      }`}
+    />
+  </button>
+);
 
 const ConfigurationPanel: React.FC = () => {
   const { listConfigurations: configuration } = useNotifications();
@@ -15,14 +37,9 @@ const ConfigurationPanel: React.FC = () => {
   const configList = configuration ? (configuration as Configuration) : {};
   const configEntries = Object.entries(configList);
 
-  const handleEnableConfigChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newValue = event.target.checked;
+  const handleEnableChange = (newValue: boolean) => {
     setIsEnabled(newValue);
-    if (configuration) {
-      setNotificationStatus(newValue);
-    }
+    if (configuration) setNotificationStatus(newValue);
   };
 
   useEffect(() => {
@@ -31,49 +48,36 @@ const ConfigurationPanel: React.FC = () => {
     }
   }, [configuration?.enableNotification]);
 
+  if (configEntries.length === 0) return null;
+
   return (
-    <div className="p-4">
-      {configEntries.length > 0 && (
-        <div>
-          <div className="flex items-center gap-4 mb-4">
-            <label className="min-w-[150px] text-sm font-medium text-gray-700">
-              Client ID
-            </label>
-            <input
-              id="config_user_id_field"
-              type="text"
-              className="flex-1 border-b border-gray-300 focus:border-blue-600 outline-none px-0 py-1 text-sm text-gray-900 transition-colors"
-              value={configuration?.userId || ""}
-              placeholder="Unique user identifier"
-              readOnly
-            />
-          </div>
-          <div className="flex items-center gap-4 mt-4 mb-4">
-            <label className="min-w-[140px] text-sm font-medium text-gray-700">
-              Enable Notifications
-            </label>
-            <label className="flex items-center cursor-pointer group">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={isEnabled}
-                  onChange={handleEnableConfigChange}
-                  className="sr-only"
-                />
-                <div
-                  className={`w-10 h-6 rounded-full transition-colors ${isEnabled ? "bg-green-500" : "bg-gray-300"}`}
-                ></div>
-                <div
-                  className={`absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform ${isEnabled ? "translate-x-4" : "translate-x-0"}`}
-                ></div>
-              </div>
-            </label>
-          </div>
+    <div className="border-b border-gray-100 bg-gray-50/60 px-4 py-3 space-y-3">
+
+      {/* Client ID */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 w-36 shrink-0">
+          <FingerPrintIcon className="w-3.5 h-3.5 text-gray-300" />
+          <span className="text-xs font-medium text-gray-400">Client ID</span>
         </div>
-      )}
-      <div className="flex justify-end items-center">
-        <p className="text-xs text-gray-500">Powered by r2-notify</p>
+        <input
+          id="config_user_id_field"
+          type="text"
+          value={configuration?.userId || ""}
+          placeholder="Unique user identifier"
+          readOnly
+          className="flex-1 text-xs text-gray-600 bg-transparent border-b border-gray-200 py-0.5 focus:outline-none focus:border-gray-300 transition-colors truncate"
+        />
       </div>
+
+      {/* Enable notifications */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-gray-400">
+          Enable Notifications
+        </span>
+        <Toggle checked={isEnabled} onChange={handleEnableChange} />
+      </div>
+
+      <p className="text-[10px] text-gray-300 text-right">Powered by r2-notify</p>
     </div>
   );
 };

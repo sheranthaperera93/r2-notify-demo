@@ -1,18 +1,12 @@
 // components/notifications/NotificationItem.tsx
-import { Check, DeleteOutline, MoreVertOutlined } from "@mui/icons-material";
+import { useState, useRef, useEffect } from "react";
 import {
-  Box,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Popover,
-  Typography,
-} from "@mui/material";
+  CheckIcon,
+  TrashIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/outline";
 import NotificationStatusBorder from "./NotificationStatusBorder";
 import { formatDate } from "./utils";
-import { useState } from "react";
 import { NotificationMessage } from "r2-notify-client";
 
 type Props = {
@@ -21,91 +15,77 @@ type Props = {
   onDelete: (e: React.MouseEvent, id: string) => void;
 };
 
-export default function NotificationItem({
-  item,
-  onMarkRead,
-  onDelete,
-}: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+export default function NotificationItem({ item, onMarkRead, onDelete }: Props) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // Close menu on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
   return (
-    <NotificationStatusBorder status={item.status} sx={{ mb: 0.5, ml: 3 }}>
-      <Box
+    <NotificationStatusBorder
+      status={item.status}
+      className={`ml-4 my-0.5 ${!item.readStatus ? "bg-gray-50/70" : ""}`}
+    >
+      <div
+        className="flex items-start gap-2 py-2 pr-2"
         onClick={(e) => e.stopPropagation()}
-        onFocus={(e) => e.stopPropagation()}
-        sx={{ display: "flex", alignItems: "center", py: 0.5 }}
-         key={`item-${item.appId}-${item.groupKey}-${item.id}`}
       >
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography component="div" noWrap>
-            {item.message}
-          </Typography>
-          <Typography
-            component="div"
-            variant="caption"
-            color="text.secondary"
-            noWrap
-          >
-            {formatDate(item.createdAt)}
-          </Typography>
-        </Box>
+        {/* Unread dot */}
+        <div className="mt-1.5 shrink-0">
+          {!item.readStatus && (
+            <span className="block w-1.5 h-1.5 rounded-full bg-blue-500" />
+          )}
+        </div>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: 2 }}>
-          <IconButton
-            aria-describedby="App-More"
-            onClick={handleClick}
-            component="span"
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <p className={`text-sm truncate ${item.readStatus ? "text-gray-400" : "text-gray-700"}`}>
+            {item.message}
+          </p>
+          <p className="text-[11px] text-gray-400 mt-0.5">
+            {formatDate(item.createdAt)}
+          </p>
+        </div>
+
+        {/* Context menu */}
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            onClick={(e) => { e.stopPropagation(); setOpen((p) => !p); }}
+            className="p-1 rounded-md text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none"
           >
-            <MoreVertOutlined fontSize="small" />
-          </IconButton>
-          <Popover
-            id={`group-more-${item.id}`}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-          >
-            <Box>
-              <MenuList disablePadding>
-                <MenuItem
-                  onClick={(e) => {
-                    onMarkRead(e, item.id);
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon title="Mark group as Read">
-                    <Check fontSize="small" color="success" />
-                  </ListItemIcon>
-                  <ListItemText>Mark as Read</ListItemText>
-                </MenuItem>
-                <MenuItem
-                  onClick={(e) => {
-                    onDelete(e, item.id);
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon title="Delete App" color="error">
-                    <DeleteOutline fontSize="small" color="error" />
-                  </ListItemIcon>
-                  <ListItemText>Delete</ListItemText>
-                </MenuItem>
-              </MenuList>
-            </Box>
-          </Popover>
-        </Box>
-      </Box>
+            <EllipsisVerticalIcon className="w-4 h-4" />
+          </button>
+
+          {open && (
+            <div className="absolute right-0 top-6 z-50 w-44 bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+              <button
+                onClick={(e) => { onMarkRead(e, item.id); setOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
+                Mark as Read
+              </button>
+              <button
+                onClick={(e) => { onDelete(e, item.id); setOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
+              >
+                <TrashIcon className="w-3.5 h-3.5" />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </NotificationStatusBorder>
   );
 }

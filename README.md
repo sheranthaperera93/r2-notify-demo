@@ -1,4 +1,4 @@
-# R2 Notify Playground
+# R2 Notify - Notification System
 
 A sample React application for testing the `r2-notify-react` notification library.
 

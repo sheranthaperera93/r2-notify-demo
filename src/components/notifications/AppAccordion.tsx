@@ -1,32 +1,20 @@
 // components/notifications/AppAccordion.tsx
-import { Check, DeleteOutline, MoreVertOutlined } from "@mui/icons-material";
+import { useState, useRef, useEffect } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Popover,
-  Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+  ChevronDownIcon,
+  CheckIcon,
+  TrashIcon,
+  EllipsisVerticalIcon,
+  Squares2X2Icon,
+} from "@heroicons/react/24/outline";
 import GroupAccordion from "./GroupAccordion";
-import { useState } from "react";
 import { NotificationApp } from "r2-notify-client";
 
 type Props = {
   app: NotificationApp;
   onAppMarkRead: (e: React.MouseEvent, appId: string) => void;
   onAppDelete: (e: React.MouseEvent, appId: string) => void;
-  onGroupMarkRead: (
-    e: React.MouseEvent,
-    appId: string,
-    groupKey: string,
-  ) => void;
+  onGroupMarkRead: (e: React.MouseEvent, appId: string, groupKey: string) => void;
   onGroupDelete: (e: React.MouseEvent, appId: string, groupKey: string) => void;
   onItemRead: (e: React.MouseEvent, id: string) => void;
   onItemDelete: (e: React.MouseEvent, id: string) => void;
@@ -41,111 +29,98 @@ export default function AppAccordion({
   onItemRead,
   onItemDelete,
 }: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [expanded, setExpanded] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
 
   return (
-    <Accordion
-      disableGutters
-      defaultExpanded
-      elevation={0}
-      sx={{
-        "&:before": { display: "none" },
-        "&.Mui-expanded": { margin: 0 },
-      }}
-      key={`notification-app-${app.appId}`}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        id={`app-more-${app.appId}`}
-        sx={{
-          flexDirection: "row-reverse",
-          pl: 0,
-          pr: 0,
-        }}
-      >
-        <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-          {/* Text (left) */}
-          <Typography noWrap sx={{ ml: 1 }}>
-            {app.appId}
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          {/* Actions (right) — in summary */}
-          <Box
-            onClick={(e) => e.stopPropagation()}
-            onFocus={(e) => e.stopPropagation()}
-          >
-            <IconButton
-              aria-describedby="App-More"
-              onClick={handleClick}
-              component="span"
-            >
-              <MoreVertOutlined fontSize="small" />
-            </IconButton>
-            <Popover
-              id={open ? "simple-popover" : undefined}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-            >
-              <Box>
-                <MenuList disablePadding>
-                  <MenuItem
-                    onClick={(e) => {
-                      onAppMarkRead(e, app.appId);
-                      handleClose();
-                    }}
-                  >
-                    <ListItemIcon title="Mark App as Read">
-                      <Check fontSize="small" color="success" />
-                    </ListItemIcon>
-                    <ListItemText>Mark App as Read</ListItemText>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={(e) => {
-                      onAppDelete(e, app.appId);
-                      handleClose();
-                    }}
-                  >
-                    <ListItemIcon title="Delete App" color="error">
-                      <DeleteOutline fontSize="small" color="error" />
-                    </ListItemIcon>
-                    <ListItemText>Delete App</ListItemText>
-                  </MenuItem>
-                </MenuList>
-              </Box>
-            </Popover>
-          </Box>
-        </Box>
-      </AccordionSummary>
-
-      <AccordionDetails style={{ padding: 0 }}>
-        {/* Groups */}
-        {app.groups.map((group) => (
-          <GroupAccordion
-            key={`group-${app.appId}-${group.groupKey}`}
-            appId={app.appId}
-            group={group}
-            onMarkRead={onGroupMarkRead}
-            onDelete={onGroupDelete}
-            onItemRead={onItemRead}
-            onItemDelete={onItemDelete}
+    <div className="border-b border-gray-100 last:border-b-0">
+      {/* App header */}
+      <div className="flex items-center px-3 py-2.5 hover:bg-gray-50/60 transition-colors group">
+        {/* Expand toggle */}
+        <button
+          onClick={() => setExpanded((p) => !p)}
+          className="flex items-center gap-2 flex-1 min-w-0 text-left focus:outline-none"
+        >
+          <ChevronDownIcon
+            className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform duration-200 ${
+              expanded ? "" : "-rotate-90"
+            }`}
           />
-        ))}
-      </AccordionDetails>
-    </Accordion>
+          <div className="flex items-center justify-center w-5 h-5 rounded bg-gray-100 shrink-0">
+            <Squares2X2Icon className="w-3 h-3 text-gray-400" />
+          </div>
+          <span className="text-xs font-semibold text-gray-700 truncate tracking-wide uppercase">
+            {app.appId}
+          </span>
+          {app.unread > 0 && (
+            <span className="ml-1 shrink-0 px-1.5 py-px rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200">
+              {app.unread} unread
+            </span>
+          )}
+        </button>
+
+        {/* App context menu */}
+        <div
+          className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          ref={menuRef}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setMenuOpen((p) => !p); }}
+            className="p-1 rounded-md text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none"
+          >
+            <EllipsisVerticalIcon className="w-4 h-4" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-7 z-50 w-48 bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+              <button
+                onClick={(e) => { onAppMarkRead(e, app.appId); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
+                Mark App as Read
+              </button>
+              <button
+                onClick={(e) => { onAppDelete(e, app.appId); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
+              >
+                <TrashIcon className="w-3.5 h-3.5" />
+                Delete App
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Groups */}
+      {expanded && (
+        <div className="pb-1">
+          {app.groups.map((group) => (
+            <GroupAccordion
+              key={`group-${app.appId}-${group.groupKey}`}
+              appId={app.appId}
+              group={group}
+              onMarkRead={onGroupMarkRead}
+              onDelete={onGroupDelete}
+              onItemRead={onItemRead}
+              onItemDelete={onItemDelete}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

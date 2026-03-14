@@ -1,31 +1,26 @@
-import { Box } from "@mui/material";
+// components/notifications/NotificationStatusBorder.tsx
 
-const STATUS_COLOR_MAP: Record<string, string> = {
-  success: "#2e7d32", // green
-  error: "#d32f2f", // red
-  warning: "#ed6c02", // orange
-  info: "#0288d1", // blue
+const STATUS_BORDER_MAP: Record<string, string> = {
+  success: "border-l-emerald-500",
+  error: "border-l-red-500",
+  warning: "border-l-amber-500",
+  info: "border-l-blue-500",
 };
 
 export default function NotificationStatusBorder({
   status,
   children,
-  sx = {},
+  className = "",
 }: {
   status: string;
-  children: any;
-  sx?: object;
+  children: React.ReactNode;
+  className?: string;
 }) {
+  const borderColor = STATUS_BORDER_MAP[status] ?? "border-l-gray-300";
+
   return (
-    <Box
-      sx={{
-        borderLeft: "4px solid",
-        borderLeftColor: STATUS_COLOR_MAP[status],
-        pl: 1,
-        ...sx,
-      }}
-    >
+    <div className={`border-l-2 pl-3 ${borderColor} ${className}`}>
       {children}
-    </Box>
+    </div>
   );
 }

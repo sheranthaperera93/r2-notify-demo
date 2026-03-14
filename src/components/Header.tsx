@@ -9,42 +9,34 @@ import React, {
 import { NotificationCenter } from "../components/notifications/NotificationCenter";
 import { NotificationApp, NotificationMessage } from "r2-notify-client";
 import { deDuplicateAndSort, groupNotifications } from "./notifications/utils";
-import { useAuth } from "../context/AuthContext";
+import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon as BellIconSolid } from "@heroicons/react/24/solid";
 
 export const Header: React.FC = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
-  const { signOut } = useAuth();
 
-  // Track processed notification IDs to prevent duplicates
   const processedNewNotificationsRef = useRef<Set<string>>(new Set());
 
   const { listNotifications, newNotification, isConnected } =
     useNotifications();
 
-  // Memoize toggle function
   const toggleCenter = useCallback(() => setIsCenterOpen((prev) => !prev), []);
 
-  // Handle initial list and bulk updates from listNotifications
   useEffect(() => {
     if (!Array.isArray(listNotifications)) return;
     setNotifications(listNotifications);
   }, [listNotifications]);
 
-  // Handle new real-time notifications
   useEffect(() => {
     if (!newNotification) return;
-
     const n = newNotification as NotificationMessage;
-
-    // Only add if we haven't seen this specific newNotification event
     if (!processedNewNotificationsRef.current.has(n.id)) {
       processedNewNotificationsRef.current.add(n.id);
       setNotifications((curr) => [n, ...curr]);
     }
   }, [newNotification]);
 
-  // Handle disconnect - reset everything
   useEffect(() => {
     if (!isConnected) {
       setNotifications([]);
@@ -52,104 +44,82 @@ export const Header: React.FC = () => {
     }
   }, [isConnected]);
 
-  // Deduplicate, sort, and group notifications
   const groupedNotifications = useMemo<NotificationApp[]>(() => {
     return groupNotifications(deDuplicateAndSort(notifications));
   }, [notifications]);
 
-  // Calculate count from deduplicated notifications
   const notificationCount = useMemo(() => {
     return deDuplicateAndSort(notifications).length;
   }, [notifications]);
 
   return (
-    <header className="bg-[#1b5e20] text-white shadow-md sticky top-0 z-30">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <svg
-            className="w-8 h-8"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-            />
-          </svg>
-          <span className="text-xl font-bold tracking-tight">
-            R2 Notify Playground
-          </span>
+    <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0f1f10]/90 backdrop-blur-md">
+      <div className="container mx-auto px-6 h-14 flex items-center justify-between">
+        {/* Logo / Brand */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 ring-1 ring-emerald-500/30">
+            <BellIconSolid className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-semibold tracking-tight text-white">
+              R2 Notify
+            </span>
+            <span className="hidden sm:block text-xs text-white/30 font-normal">
+              Notification System
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        {/* Right side controls */}
+        <div className="flex items-center gap-3">
+          {/* Connection status pill */}
+          <div
+            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-500 ${
+              isConnected
+                ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20"
+                : "bg-white/5 text-white/30 ring-1 ring-white/10"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isConnected ? "bg-emerald-400 animate-pulse" : "bg-white/20"
+              }`}
+            />
+            {isConnected ? "Live" : "Offline"}
+          </div>
+
+          {/* Bell button — only when connected */}
           {isConnected && (
             <button
               onClick={toggleCenter}
               title={
-                isCenterOpen
-                  ? "Close Notification Panel"
-                  : "Open Notification Panel"
+                isCenterOpen ? "Close notifications" : "Open notifications"
               }
-              className="relative p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
+              className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
+                isCenterOpen
+                  ? "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30"
+                  : "text-white/50 hover:bg-white/8 hover:text-white/80"
+              }`}
             >
-              <svg
-                className="w-7 h-7"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-              </svg>
+              <BellIcon className="w-5 h-5" />
               {notificationCount > 0 && (
-                <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-[#1b5e20]">
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white leading-none">
                   {notificationCount > 99 ? "99+" : notificationCount}
                 </span>
               )}
             </button>
           )}
-
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={signOut}
-              title="Logout"
-              className="relative p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
-                />
-              </svg>
-            </button>
-          </div>
         </div>
       </div>
 
+      {/* Notification panel */}
       {isCenterOpen && (
         <div
           className="fixed inset-0 z-40"
           onClick={() => setIsCenterOpen(false)}
         >
           <div
-            className="absolute top-16 right-4 z-50"
+            className="absolute top-14 right-4 z-50"
             onClick={(e) => e.stopPropagation()}
           >
             <NotificationCenter

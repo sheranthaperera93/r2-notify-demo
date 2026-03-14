@@ -1,21 +1,12 @@
 // components/notifications/GroupAccordion.tsx
-import { Check, DeleteOutline, MoreVertOutlined } from "@mui/icons-material";
+import { useState, useRef, useEffect } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Popover,
-  Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+  ChevronDownIcon,
+  CheckIcon,
+  TrashIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/outline";
 import NotificationItem from "./NotificationItem";
-import { useState } from "react";
 import { NotificationGroup, NotificationMessage } from "r2-notify-client";
 
 type Props = {
@@ -35,107 +26,94 @@ export default function GroupAccordion({
   onItemRead,
   onItemDelete,
 }: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [expanded, setExpanded] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
+  const unreadCount = group.items.filter((i) => !i.readStatus).length;
 
   return (
-    <Accordion
-      disableGutters
-      elevation={0}
-      defaultExpanded
-      sx={{
-        "&:before": { display: "none" },
-        "&.Mui-expanded": { margin: 0 },
-      }}
-      key={`group-${appId}-${group.groupKey}`}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        id={`group-header-${group.groupKey}`}
-        sx={{
-          flexDirection: "row-reverse",
-          pl: 2,
-          pr: 0,
-        }}
-      >
-        <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-          <Typography noWrap sx={{ ml: 1 }}>
-            {group.groupKey}
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          {/* Group actions */}
-          <Box
-            onClick={(e) => e.stopPropagation()}
-            onFocus={(e) => e.stopPropagation()}
-          >
-            <IconButton
-              aria-describedby="App-More"
-              onClick={handleClick}
-              component="span"
-            >
-              <MoreVertOutlined fontSize="small" />
-            </IconButton>
-            <Popover
-              id={`group-more-${group.groupKey}`}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-            >
-              <Box>
-                <MenuList disablePadding>
-                  <MenuItem
-                    onClick={(e) => {
-                      onMarkRead(e, appId, group.groupKey);
-                      handleClose();
-                    }}
-                  >
-                    <ListItemIcon title="Mark group as Read">
-                      <Check fontSize="small" color="success" />
-                    </ListItemIcon>
-                    <ListItemText>Mark Group as Read</ListItemText>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={(e) => {
-                      onDelete(e, appId, group.groupKey);
-                      handleClose();
-                    }}
-                  >
-                    <ListItemIcon title="Delete App" color="error">
-                      <DeleteOutline fontSize="small" color="error" />
-                    </ListItemIcon>
-                    <ListItemText>Delete Group</ListItemText>
-                  </MenuItem>
-                </MenuList>
-              </Box>
-            </Popover>
-          </Box>
-        </Box>
-      </AccordionSummary>
-
-      <AccordionDetails style={{ padding: 0 }}>
-        {/* Items */}
-        {group.items.map((item: NotificationMessage) => (
-          <NotificationItem
-            key={`item-${appId}-${group.groupKey}-${item.id}`}
-            item={item}
-            onMarkRead={onItemRead}
-            onDelete={onItemDelete}
+    <div>
+      {/* Group header */}
+      <div className="flex items-center pl-6 pr-2 py-1.5 hover:bg-gray-50/80 transition-colors group">
+        {/* Expand toggle */}
+        <button
+          onClick={() => setExpanded((p) => !p)}
+          className="flex items-center gap-1.5 flex-1 min-w-0 text-left focus:outline-none"
+        >
+          <ChevronDownIcon
+            className={`w-3.5 h-3.5 text-gray-300 shrink-0 transition-transform duration-200 ${
+              expanded ? "" : "-rotate-90"
+            }`}
           />
-        ))}
-      </AccordionDetails>
-    </Accordion>
+          <span className="text-xs font-medium text-gray-500 truncate">
+            {group.groupKey}
+          </span>
+          {unreadCount > 0 && (
+            <span className="ml-1 shrink-0 px-1.5 py-px rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 ring-1 ring-blue-200">
+              {unreadCount}
+            </span>
+          )}
+        </button>
+
+        {/* Group context menu */}
+        <div
+          className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          ref={menuRef}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setMenuOpen((p) => !p); }}
+            className="p-1 rounded-md text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none"
+          >
+            <EllipsisVerticalIcon className="w-3.5 h-3.5" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-6 z-50 w-48 bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+              <button
+                onClick={(e) => { onMarkRead(e, appId, group.groupKey); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
+                Mark Group as Read
+              </button>
+              <button
+                onClick={(e) => { onDelete(e, appId, group.groupKey); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
+              >
+                <TrashIcon className="w-3.5 h-3.5" />
+                Delete Group
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Items */}
+      {expanded && (
+        <div>
+          {group.items.map((item: NotificationMessage) => (
+            <NotificationItem
+              key={`item-${appId}-${group.groupKey}-${item.id}`}
+              item={item}
+              onMarkRead={onItemRead}
+              onDelete={onItemDelete}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
