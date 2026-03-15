@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState } from "react";
 import { Header } from "./components/Header";
 import { R2NotifyProvider } from "r2-notify-react";
@@ -20,7 +21,7 @@ const App: React.FC = () => {
         autoConnect={autoConnect}
         debug={debug}
       >
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
           <Header />
           <main className="flex-1 container mx-auto px-4 py-10">
             <Routes>
@@ -41,7 +42,7 @@ const App: React.FC = () => {
             </Routes>
           </main>
 
-          <footer className="py-4 border-t border-gray-100 text-center text-xs text-gray-300">
+          <footer className="py-4 border-t border-gray-100 dark:border-white/8 text-center text-xs text-gray-300 dark:text-white/20">
             &copy; {new Date().getFullYear()} R2 Notify. All rights reserved.
           </footer>
         </div>

@@ -63,22 +63,22 @@ export const GetStartedPage: React.FC = () => {
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Page heading */}
       <div className="space-y-1 pb-2">
-        <h1 className="text-xl font-semibold text-gray-800 tracking-tight">
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white/90 tracking-tight">
           Get API Key
         </h1>
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-400 dark:text-white/40">
           Generate a personal API key to authenticate with R2 Notify.
         </p>
       </div>
 
       {/* Steps card */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
+      <div className="rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-white/8">
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-50 ring-1 ring-amber-200">
-              <ShieldCheckIcon className="w-3.5 h-3.5 text-amber-600" />
+            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-500/15 ring-1 ring-amber-200 dark:ring-amber-500/25">
+              <ShieldCheckIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             </div>
-            <span className="text-sm font-semibold text-gray-800 tracking-tight">
+            <span className="text-sm font-semibold text-gray-800 dark:text-white/90 tracking-tight">
               How it works
             </span>
           </div>
@@ -105,10 +105,10 @@ export const GetStartedPage: React.FC = () => {
               },
             ].map(({ step, text }) => (
               <li key={step} className="flex items-start gap-3">
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-[11px] font-bold text-gray-500 shrink-0 mt-px">
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 dark:bg-white/10 text-[11px] font-bold text-gray-500 dark:text-white/50 shrink-0 mt-px">
                   {step}
                 </span>
-                <p className="text-sm text-gray-500 leading-relaxed">{text}</p>
+                <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed">{text}</p>
               </li>
             ))}
           </ol>
@@ -116,14 +116,14 @@ export const GetStartedPage: React.FC = () => {
       </div>
 
       {/* Form / Reveal card */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
         {/* Card header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/8">
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-violet-50 ring-1 ring-violet-200">
-              <KeyIcon className="w-3.5 h-3.5 text-violet-600" />
+            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-violet-50 dark:bg-violet-500/15 ring-1 ring-violet-200 dark:ring-violet-500/25">
+              <KeyIcon className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
             </div>
-            <span className="text-sm font-semibold text-gray-800 tracking-tight">
+            <span className="text-sm font-semibold text-gray-800 dark:text-white/90 tracking-tight">
               Generate API Key
             </span>
           </div>
@@ -133,20 +133,20 @@ export const GetStartedPage: React.FC = () => {
           {/* ── DISMISSED state ── */}
           {stage === "dismissed" && (
             <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 ring-1 ring-emerald-200">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/15 ring-1 ring-emerald-200 dark:ring-emerald-500/25">
                 <ShieldCheckIcon className="w-6 h-6 text-emerald-500" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-700">
+                <p className="text-sm font-semibold text-gray-700 dark:text-white/80">
                   Key secured
                 </p>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-400 dark:text-white/40 mt-0.5">
                   Your key has been dismissed. Generate a new one if needed.
                 </p>
               </div>
               <button
                 onClick={() => setStage("form")}
-                className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-violet-700 bg-violet-50 ring-1 ring-violet-200 hover:bg-violet-100 transition-colors focus:outline-none"
+                className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/15 ring-1 ring-violet-200 dark:ring-violet-500/25 hover:bg-violet-100 dark:hover:bg-violet-500/25 transition-colors focus:outline-none"
               >
                 Generate another
               </button>
@@ -157,7 +157,7 @@ export const GetStartedPage: React.FC = () => {
           {(stage === "form" || stage === "loading") && (
             <>
               <div className="flex flex-col gap-1.5">
-                <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-white/40">
                   <UserCircleIcon className="w-3.5 h-3.5" />
                   User ID
                 </label>
@@ -171,9 +171,9 @@ export const GetStartedPage: React.FC = () => {
                   onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
                   disabled={stage === "loading"}
                   placeholder="e.g. user_abc123"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 placeholder-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 text-sm text-gray-800 dark:text-white/80 placeholder-gray-300 dark:placeholder-white/20 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-400 dark:disabled:text-white/20 disabled:cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 dark:text-white/35">
                   Choose something unique and memorable - you'll use this to
                   identify your key.
                 </p>
@@ -181,7 +181,7 @@ export const GetStartedPage: React.FC = () => {
 
               {/* Error */}
               {error && (
-                <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3.5 py-2.5 text-xs text-red-600">
+                <div className="flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-3.5 py-2.5 text-xs text-red-600 dark:text-red-400">
                   <ExclamationCircleIcon className="w-4 h-4 shrink-0 mt-px" />
                   <span>{error}</span>
                 </div>
@@ -190,7 +190,7 @@ export const GetStartedPage: React.FC = () => {
               <button
                 onClick={handleGenerate}
                 disabled={!userId.trim() || stage === "loading"}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium text-violet-700 bg-violet-50 ring-1 ring-violet-200 hover:bg-violet-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/15 ring-1 ring-violet-200 dark:ring-violet-500/25 hover:bg-violet-100 dark:hover:bg-violet-500/25 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {stage === "loading" ? (
                   <>
@@ -230,13 +230,13 @@ export const GetStartedPage: React.FC = () => {
           {stage === "revealed" && apiKey && (
             <div className="space-y-4">
               {/* Warning banner */}
-              <div className="flex items-start gap-2.5 rounded-lg bg-amber-50 border border-amber-200 px-3.5 py-3">
+              <div className="flex items-start gap-2.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-3.5 py-3">
                 <EyeSlashIcon className="w-4 h-4 text-amber-500 shrink-0 mt-px" />
                 <div>
-                  <p className="text-xs font-semibold text-amber-700">
+                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-400">
                     Copy this key now
                   </p>
-                  <p className="text-xs text-amber-600 mt-0.5 leading-relaxed">
+                  <p className="text-xs text-amber-600 dark:text-amber-400/70 mt-0.5 leading-relaxed">
                     This is the only time your API key will be shown. Once
                     dismissed, it cannot be recovered.
                   </p>
@@ -270,14 +270,14 @@ export const GetStartedPage: React.FC = () => {
               <button
                 onClick={handleDismiss}
                 disabled={!copied}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300 disabled:opacity-35 disabled:cursor-not-allowed text-red-600 bg-red-50 ring-1 ring-red-200 hover:bg-red-100"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300 disabled:opacity-35 disabled:cursor-not-allowed text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 ring-1 ring-red-200 dark:ring-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20"
               >
                 <EyeSlashIcon className="w-4 h-4" />
                 I've copied it - dismiss key
               </button>
 
               {!copied && (
-                <p className="text-center text-[11px] text-gray-400">
+                <p className="text-center text-[11px] text-gray-400 dark:text-white/30">
                   Copy the key first before dismissing.
                 </p>
               )}

@@ -1,3 +1,4 @@
+// src/components/ConnectionPanel.tsx
 import React, { useEffect } from "react";
 import { useNotifications, useNotifyClient } from "r2-notify-react";
 import {
@@ -21,15 +22,14 @@ interface ToggleProps {
   name: string;
 }
 
-const Toggle: React.FC<ToggleProps> = ({ checked, disabled, onChange, name }) => (
+const Toggle: React.FC<ToggleProps> = ({ checked, disabled, onChange }) => (
   <button
     role="switch"
     aria-checked={checked}
     disabled={disabled}
-    name={name}
     onClick={() => !disabled && onChange(!checked)}
     className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 disabled:opacity-40 disabled:cursor-not-allowed ${
-      checked ? "bg-emerald-500" : "bg-gray-200"
+      checked ? "bg-emerald-500" : "bg-gray-200 dark:bg-white/10"
     }`}
   >
     <span
@@ -68,15 +68,15 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
   }, [autoConnect, debug]);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
 
-      {/* Header row */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/8">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-50 ring-1 ring-emerald-200">
-            <LinkIcon className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/15 ring-1 ring-emerald-200 dark:ring-emerald-500/25">
+            <LinkIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span className="text-sm font-semibold text-gray-800 tracking-tight">
+          <span className="text-sm font-semibold text-gray-800 dark:text-white/90 tracking-tight">
             Connection Settings
           </span>
         </div>
@@ -85,22 +85,18 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
         <div
           className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 transition-all duration-500 ${
             isConnected
-              ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-              : "bg-gray-50 text-gray-400 ring-gray-200"
+              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20"
+              : "bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/30 ring-gray-200 dark:ring-white/10"
           }`}
         >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              isConnected ? "bg-emerald-500 animate-pulse" : "bg-gray-300"
-            }`}
-          />
+          <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? "bg-emerald-500 animate-pulse" : "bg-gray-300 dark:bg-white/20"}`} />
           {isConnected ? "Connected" : "Disconnected"}
         </div>
       </div>
 
       {/* Error banner */}
       {lastError?.message && (
-        <div className="mx-5 mt-4 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3.5 py-2.5 text-xs text-red-600">
+        <div className="mx-5 mt-4 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-3.5 py-2.5 text-xs text-red-600 dark:text-red-400">
           <span className="mt-px shrink-0">⚠</span>
           <span>{lastError.message}</span>
         </div>
@@ -108,14 +104,13 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
 
       {/* Controls */}
       <div className="px-5 py-5 flex flex-col gap-4">
-
         {/* Auto Connect */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <SignalIcon className="w-4 h-4 text-gray-400" />
+            <SignalIcon className="w-4 h-4 text-gray-400 dark:text-white/30" />
             <div>
-              <p className="text-sm text-gray-700 font-medium">Auto Connect</p>
-              <p className="text-xs text-gray-400 mt-0.5">Reconnect automatically on mount</p>
+              <p className="text-sm text-gray-700 dark:text-white/80 font-medium">Auto Connect</p>
+              <p className="text-xs text-gray-400 dark:text-white/30 mt-0.5">Reconnect automatically on mount</p>
             </div>
           </div>
           <Toggle
@@ -126,15 +121,15 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
           />
         </div>
 
-        <div className="h-px bg-gray-100" />
+        <div className="h-px bg-gray-100 dark:bg-white/6" />
 
         {/* Debug Logs */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <BugAntIcon className="w-4 h-4 text-gray-400" />
+            <BugAntIcon className="w-4 h-4 text-gray-400 dark:text-white/30" />
             <div>
-              <p className="text-sm text-gray-700 font-medium">Debug Logs</p>
-              <p className="text-xs text-gray-400 mt-0.5">Print WebSocket activity to console</p>
+              <p className="text-sm text-gray-700 dark:text-white/80 font-medium">Debug Logs</p>
+              <p className="text-xs text-gray-400 dark:text-white/30 mt-0.5">Print WebSocket activity to console</p>
             </div>
           </div>
           <Toggle
@@ -145,14 +140,13 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
         </div>
       </div>
 
-      {/* Connect / Disconnect button */}
+      {/* Connect / Disconnect */}
       {!autoConnect && (
         <div className="px-5 pb-5">
           {isConnected ? (
             <button
               onClick={() => client?.close()}
-              title="Disconnect from R2 Notify"
-              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 ring-1 ring-red-200 hover:bg-red-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 ring-1 ring-red-200 dark:ring-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors focus:outline-none"
             >
               <SignalSlashIcon className="w-4 h-4" />
               Disconnect
@@ -160,9 +154,8 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
           ) : (
             <button
               onClick={() => client?.connect()}
-              title="Connect to R2 Notify"
               disabled={isConnected}
-              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-200 dark:ring-emerald-500/25 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <SignalIcon className="w-4 h-4" />
               Connect
@@ -172,12 +165,12 @@ export const ConnectionPanel: React.FC<ConnectionPanelProps> = ({
       )}
 
       {/* Notes */}
-      <div className="mx-5 mb-5 rounded-lg bg-gray-50 border border-gray-100 px-4 py-3 space-y-1.5">
-        <p className="text-[11px] text-gray-400 uppercase tracking-wider font-medium">Notes</p>
-        <ol className="list-decimal list-inside space-y-1.5 text-xs text-gray-500 leading-relaxed">
+      <div className="mx-5 mb-5 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-white/10 px-4 py-3 space-y-1.5">
+        <p className="text-[11px] text-gray-400 dark:text-white/50 uppercase tracking-wider font-medium">Notes</p>
+        <ol className="list-decimal list-inside space-y-1.5 text-xs text-gray-500 dark:text-white/60 leading-relaxed">
           <li>
             The WebSocket connection is established automatically when the provider is mounted with{" "}
-            <code className="text-emerald-600 text-[11px]">autoConnect=true</code>. Uncheck to manually control the session lifecycle.
+            <code className="text-emerald-600 dark:text-emerald-400/70 text-[11px]">autoConnect=true</code>. Uncheck to manually control the session lifecycle.
           </li>
           <li>
             Debug logs toggle WebSocket activity output in the browser console for the R2-Notify connection.

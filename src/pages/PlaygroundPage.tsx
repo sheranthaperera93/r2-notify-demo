@@ -1,3 +1,4 @@
+// src/pages/PlaygroundPage.tsx
 import React from "react";
 import { ConnectionPanel } from "../components/ConnectionPanel";
 import DebugLogPanel from "../components/DebugLogPanel";
@@ -12,10 +13,10 @@ const PlaygroundPage: React.FC<{
 }> = ({ autoConnect, setAutoConnect, debug, setDebug, apiKey }) => (
   <div className="max-w-2xl mx-auto space-y-6">
     <div className="space-y-1 pb-2">
-      <h1 className="text-xl font-semibold text-gray-800 tracking-tight">
+      <h1 className="text-xl font-semibold text-gray-800 dark:text-white/90 tracking-tight">
         Playground
       </h1>
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-gray-400 dark:text-white/40">
         Configure your connection and send real-time notifications.
       </p>
     </div>

@@ -1,11 +1,6 @@
-// components/notifications/GroupAccordion.tsx
+// src/components/notifications/GroupAccordion.tsx
 import { useState, useRef, useEffect } from "react";
-import {
-  ChevronDownIcon,
-  CheckIcon,
-  TrashIcon,
-  EllipsisVerticalIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CheckIcon, TrashIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import NotificationItem from "./NotificationItem";
 import { NotificationGroup, NotificationMessage } from "r2-notify-client";
 
@@ -18,25 +13,14 @@ type Props = {
   onItemDelete: (e: React.MouseEvent, id: string) => void;
 };
 
-export default function GroupAccordion({
-  appId,
-  group,
-  onMarkRead,
-  onDelete,
-  onItemRead,
-  onItemDelete,
-}: Props) {
+export default function GroupAccordion({ appId, group, onMarkRead, onDelete, onItemRead, onItemDelete }: Props) {
   const [expanded, setExpanded] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!menuOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
+    const handler = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false); };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [menuOpen]);
@@ -45,72 +29,36 @@ export default function GroupAccordion({
 
   return (
     <div>
-      {/* Group header */}
-      <div className="flex items-center pl-6 pr-2 py-1.5 hover:bg-gray-50/80 transition-colors group">
-        {/* Expand toggle */}
-        <button
-          onClick={() => setExpanded((p) => !p)}
-          className="flex items-center gap-1.5 flex-1 min-w-0 text-left focus:outline-none"
-        >
-          <ChevronDownIcon
-            className={`w-3.5 h-3.5 text-gray-300 shrink-0 transition-transform duration-200 ${
-              expanded ? "" : "-rotate-90"
-            }`}
-          />
-          <span className="text-xs font-medium text-gray-500 truncate">
-            {group.groupKey}
-          </span>
+      <div className="flex items-center pl-6 pr-2 py-1.5 hover:bg-gray-50/80 dark:hover:bg-white/4 transition-colors group">
+        <button onClick={() => setExpanded((p) => !p)} className="flex items-center gap-1.5 flex-1 min-w-0 text-left focus:outline-none">
+          <ChevronDownIcon className={`w-3.5 h-3.5 text-gray-300 dark:text-white/20 shrink-0 transition-transform duration-200 ${expanded ? "" : "-rotate-90"}`} />
+          <span className="text-xs font-medium text-gray-500 dark:text-white/50 truncate">{group.groupKey}</span>
           {unreadCount > 0 && (
-            <span className="ml-1 shrink-0 px-1.5 py-px rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 ring-1 ring-blue-200">
+            <span className="ml-1 shrink-0 px-1.5 py-px rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 ring-1 ring-blue-200 dark:ring-blue-500/25">
               {unreadCount}
             </span>
           )}
         </button>
-
-        {/* Group context menu */}
-        <div
-          className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-          ref={menuRef}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={(e) => { e.stopPropagation(); setMenuOpen((p) => !p); }}
-            className="p-1 rounded-md text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none"
-          >
+        <div className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" ref={menuRef} onClick={(e) => e.stopPropagation()}>
+          <button onClick={(e) => { e.stopPropagation(); setMenuOpen((p) => !p); }} className="p-1 rounded-md text-gray-300 dark:text-white/20 hover:text-gray-500 dark:hover:text-white/50 hover:bg-gray-100 dark:hover:bg-white/8 transition-colors focus:outline-none">
             <EllipsisVerticalIcon className="w-3.5 h-3.5" />
           </button>
-
           {menuOpen && (
-            <div className="absolute right-0 top-6 z-50 w-48 bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
-              <button
-                onClick={(e) => { onMarkRead(e, appId, group.groupKey); setMenuOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
-              >
-                <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
-                Mark Group as Read
+            <div className="absolute right-0 top-6 z-50 w-48 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-white/10 shadow-lg overflow-hidden">
+              <button onClick={(e) => { onMarkRead(e, appId, group.groupKey); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/8 transition-colors">
+                <CheckIcon className="w-3.5 h-3.5 text-emerald-500" /> Mark Group as Read
               </button>
-              <button
-                onClick={(e) => { onDelete(e, appId, group.groupKey); setMenuOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
-              >
-                <TrashIcon className="w-3.5 h-3.5" />
-                Delete Group
+              <button onClick={(e) => { onDelete(e, appId, group.groupKey); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                <TrashIcon className="w-3.5 h-3.5" /> Delete Group
               </button>
             </div>
           )}
         </div>
       </div>
-
-      {/* Items */}
       {expanded && (
         <div>
           {group.items.map((item: NotificationMessage) => (
-            <NotificationItem
-              key={`item-${appId}-${group.groupKey}-${item.id}`}
-              item={item}
-              onMarkRead={onItemRead}
-              onDelete={onItemDelete}
-            />
+            <NotificationItem key={`item-${appId}-${group.groupKey}-${item.id}`} item={item} onMarkRead={onItemRead} onDelete={onItemDelete} />
           ))}
         </div>
       )}

@@ -50,7 +50,10 @@ const features = [
   },
 ];
 
-const accentMap: Record<string, { pill: string; icon: string; border: string }> = {
+const accentMap: Record<
+  string,
+  { pill: string; icon: string; border: string }
+> = {
   emerald: {
     pill: "bg-emerald-50 text-emerald-600 ring-emerald-200",
     icon: "text-emerald-500",
@@ -151,8 +154,10 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => (
   </div>
 );
 
-const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200">
+const SectionLabel: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-500/25">
     {children}
   </span>
 );
@@ -162,7 +167,6 @@ const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen">
-
       {/* ── Hero ── */}
       <section className="relative bg-[#0a1a0b] overflow-hidden">
         {/* Subtle grid pattern */}
@@ -226,23 +230,25 @@ export const LandingPage: React.FC = () => {
 
           {/* Inspired-by note */}
           <p className="mt-10 text-xs text-white/20 tracking-wide">
-            Inspired by R2-D2 — a quiet, dependable messenger that just does its job.
+            Inspired by R2-D2 — a quiet, dependable messenger that just does its
+            job.
           </p>
         </div>
       </section>
 
       {/* ── Features ── */}
-      <section className="bg-white border-b border-gray-100 py-20">
+      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-white/8 py-20">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-12 space-y-3">
             <SectionLabel>
               <BoltIcon className="w-3 h-3" /> Features
             </SectionLabel>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white/90 tracking-tight">
               Built for modern applications
             </h2>
-            <p className="text-sm text-gray-400 max-w-xl mx-auto">
-              Every design decision in R2-Notify was made with production systems in mind.
+            <p className="text-sm text-gray-400 dark:text-white/40 max-w-xl mx-auto">
+              Every design decision in R2-Notify was made with production
+              systems in mind.
             </p>
           </div>
 
@@ -252,13 +258,19 @@ export const LandingPage: React.FC = () => {
               return (
                 <div
                   key={title}
-                  className={`group rounded-xl border border-gray-100 bg-white p-5 transition-all duration-200 hover:shadow-sm ${a.border}`}
+                  className={`group rounded-xl border border-gray-100 dark:border-white/8 bg-white dark:bg-gray-800 p-5 transition-all duration-200 hover:shadow-sm ${a.border}`}
                 >
-                  <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ring-1 mb-4 ${a.pill}`}>
+                  <div
+                    className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ring-1 mb-4 ${a.pill}`}
+                  >
                     <Icon className={`w-4 h-4 ${a.icon}`} />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1.5">{title}</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">{description}</p>
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-white/80 mb-1.5">
+                    {title}
+                  </h3>
+                  <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
+                    {description}
+                  </p>
                 </div>
               );
             })}
@@ -267,17 +279,18 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ── Architecture ── */}
-      <section className="bg-gray-50 border-b border-gray-100 py-20">
+      <section className="bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-white/8 py-20">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-12 space-y-3">
             <SectionLabel>
               <CubeTransparentIcon className="w-3 h-3" /> Architecture
             </SectionLabel>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white/90 tracking-tight">
               Three layers, intentionally decoupled
             </h2>
-            <p className="text-sm text-gray-400 max-w-xl mx-auto">
-              Use all three together, or just the parts you need. Each layer has a single responsibility.
+            <p className="text-sm text-gray-400 dark:text-white/40 max-w-xl mx-auto">
+              Use all three together, or just the parts you need. Each layer has
+              a single responsibility.
             </p>
           </div>
 
@@ -287,26 +300,34 @@ export const LandingPage: React.FC = () => {
               return (
                 <div
                   key={name}
-                  className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white px-5 py-4 hover:shadow-sm transition-shadow"
+                  className="flex items-start gap-4 rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 px-5 py-4 hover:shadow-sm transition-shadow"
                 >
-                  <div className={`flex items-center justify-center w-9 h-9 rounded-lg ring-1 shrink-0 mt-0.5 ${a.pill}`}>
+                  <div
+                    className={`flex items-center justify-center w-9 h-9 rounded-lg ring-1 shrink-0 mt-0.5 ${a.pill}`}
+                  >
                     <Icon className={`w-4 h-4 ${a.icon}`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-gray-800 font-mono">{name}</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ring-1 ${a.pill}`}>
+                      <span className="text-sm font-semibold text-gray-800 dark:text-white/80 font-mono">
+                        {name}
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-medium ring-1 ${a.pill}`}
+                      >
                         {tag}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 leading-relaxed">{desc}</p>
+                    <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
+                      {desc}
+                    </p>
                   </div>
                   {npm && (
                     <a
                       href={`https://www.npmjs.com/package/${npm}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-400 ring-1 ring-gray-200 hover:text-gray-600 hover:ring-gray-300 transition-colors"
+                      className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-400 dark:text-white/40 ring-1 ring-gray-200 dark:ring-white/10 hover:text-gray-600 dark:hover:text-white/70 hover:ring-gray-300 dark:hover:ring-white/20 transition-colors"
                     >
                       npm
                       <ArrowTopRightOnSquareIcon className="w-3 h-3" />
@@ -318,13 +339,17 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Layering note */}
-          <div className="mt-6 rounded-xl bg-white border border-gray-200 px-5 py-4">
+          <div className="mt-6 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/8 px-5 py-4">
             <div className="flex items-start gap-3">
-              <CircleStackIcon className="w-4 h-4 text-gray-300 shrink-0 mt-px" />
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Future framework wrappers (Angular, Vue, etc.) can be added on top of{" "}
-                <code className="text-emerald-600 text-[11px]">r2-notify-client</code>{" "}
-                without any changes to the core client or server — the protocol stays stable.
+              <CircleStackIcon className="w-4 h-4 text-gray-300 dark:text-white/25 shrink-0 mt-px" />
+              <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
+                Future framework wrappers (Angular, Vue, etc.) can be added on
+                top of{" "}
+                <code className="text-emerald-600 dark:text-emerald-400 text-[11px]">
+                  r2-notify-client
+                </code>{" "}
+                without any changes to the core client or server — the protocol
+                stays stable.
               </p>
             </div>
           </div>
@@ -332,13 +357,13 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ── Code examples ── */}
-      <section className="bg-white border-b border-gray-100 py-20">
+      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-white/8 py-20">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-12 space-y-3">
             <SectionLabel>
               <CodeBracketIcon className="w-3 h-3" /> Integration
             </SectionLabel>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white/90 tracking-tight">
               From zero to real-time in minutes
             </h2>
           </div>
@@ -348,7 +373,7 @@ export const LandingPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <SignalIcon className="w-4 h-4 text-emerald-500" />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-gray-600 dark:text-white/50 uppercase tracking-wider">
                   1 · Send a notification via REST
                 </span>
               </div>
@@ -359,7 +384,7 @@ export const LandingPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <CodeBracketIcon className="w-4 h-4 text-violet-500" />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-gray-600 dark:text-white/50 uppercase tracking-wider">
                   2 · Connect with the core client
                 </span>
               </div>
@@ -370,7 +395,7 @@ export const LandingPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <WrenchScrewdriverIcon className="w-4 h-4 text-blue-500" />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-gray-600 dark:text-white/50 uppercase tracking-wider">
                   3 · Or use the React wrapper
                 </span>
               </div>
@@ -381,21 +406,21 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ── When to use ── */}
-      <section className="bg-gray-50 border-b border-gray-100 py-20">
+      <section className="bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-white/8 py-20">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-12 space-y-3">
             <SectionLabel>
               <WrenchScrewdriverIcon className="w-3 h-3" /> Fit
             </SectionLabel>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white/90 tracking-tight">
               Is R2-Notify right for you?
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Good fit */}
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 px-5 py-5">
-              <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-4">
+            <div className="rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-500/8 px-5 py-5">
+              <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-4">
                 Good fit ✓
               </p>
               <ul className="space-y-2.5">
@@ -406,7 +431,10 @@ export const LandingPage: React.FC = () => {
                   "Prefer event-driven over polling architectures",
                   "Self-hosting is a priority",
                 ].map((t) => (
-                  <li key={t} className="flex items-start gap-2 text-xs text-gray-600">
+                  <li
+                    key={t}
+                    className="flex items-start gap-2 text-xs text-gray-600 dark:text-white/60"
+                  >
                     <span className="mt-px text-emerald-500 shrink-0">→</span>
                     {t}
                   </li>
@@ -415,8 +443,8 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Not ideal */}
-            <div className="rounded-xl border border-gray-200 bg-white px-5 py-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            <div className="rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 px-5 py-5">
+              <p className="text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider mb-4">
                 Not ideal ✗
               </p>
               <ul className="space-y-2.5">
@@ -425,7 +453,10 @@ export const LandingPage: React.FC = () => {
                   "Want a fully managed SaaS notification service",
                   "Tightly coupled to a single UI framework is acceptable",
                 ].map((t) => (
-                  <li key={t} className="flex items-start gap-2 text-xs text-gray-400">
+                  <li
+                    key={t}
+                    className="flex items-start gap-2 text-xs text-gray-400 dark:text-white/35"
+                  >
                     <span className="mt-px shrink-0">–</span>
                     {t}
                   </li>
@@ -472,9 +503,18 @@ export const LandingPage: React.FC = () => {
           {/* Packages */}
           <div className="pt-6 border-t border-white/8 flex flex-wrap justify-center gap-4">
             {[
-              { label: "r2-notify-server", href: "https://github.com/sheranthaperera93/r2-notify-demo" },
-              { label: "r2-notify-client", href: "https://www.npmjs.com/package/r2-notify-client" },
-              { label: "r2-notify-react", href: "https://www.npmjs.com/package/r2-notify-react" },
+              {
+                label: "r2-notify-server",
+                href: "https://github.com/sheranthaperera93/r2-notify-demo",
+              },
+              {
+                label: "r2-notify-client",
+                href: "https://www.npmjs.com/package/r2-notify-client",
+              },
+              {
+                label: "r2-notify-react",
+                href: "https://www.npmjs.com/package/r2-notify-react",
+              },
             ].map(({ label, href }) => (
               <a
                 key={label}
