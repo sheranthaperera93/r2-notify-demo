@@ -4,8 +4,8 @@ import { R2NotifyProvider } from "r2-notify-react";
 import { env } from "./config/env";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PlaygroundPage from "./pages/PlaygroundPage";
-import GetStartedPage from "./pages/GetStartedPage";
-import LandingPage from "./pages/LandingPage";
+import { GetStartedPage } from "./pages/GetStartedPage";
+import { LandingPage } from "./pages/LandingPage";
 
 const App: React.FC = () => {
   const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
@@ -16,7 +16,7 @@ const App: React.FC = () => {
     <BrowserRouter>
       <R2NotifyProvider
         url={env.wsUrl}
-        token={apiKey}
+        apiKey={apiKey}
         autoConnect={autoConnect}
         debug={debug}
       >

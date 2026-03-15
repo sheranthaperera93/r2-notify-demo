@@ -114,7 +114,7 @@ const clientSnippet = `import { R2NotifyClient } from "r2-notify-client";
 
 const client = new R2NotifyClient({
   url: "wss://<base_url>/ws",
-  token: "<api_key>",
+  apiKey: "<api_key>",
   reconnect: true,
   debug: true,
 });
@@ -126,7 +126,7 @@ client.on("newNotification", (n) => {
 
 const reactSnippet = `<R2NotifyProvider
   url="wss://<base_url>/ws"
-  token="<api_key>"
+  apiKey="<api_key>"
   autoConnect={true}
   debug={true}
 >
@@ -159,7 +159,7 @@ const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-const LandingPage: React.FC = () => {
+export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen">
 
@@ -492,5 +492,3 @@ const LandingPage: React.FC = () => {
     </div>
   );
 };
-
-export default LandingPage;

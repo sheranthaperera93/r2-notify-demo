@@ -13,7 +13,7 @@ import { env } from "../config/env";
 
 type Stage = "form" | "loading" | "revealed" | "dismissed";
 
-const GetStartedPage: React.FC = () => {
+export const GetStartedPage: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [stage, setStage] = useState<Stage>("form");
   const [apiKey, setApiKey] = useState<string | null>(null);
@@ -38,7 +38,7 @@ const GetStartedPage: React.FC = () => {
       }
 
       const data = await response.json();
-      setApiKey(data.key ?? data.apiKey ?? data.token);
+      setApiKey(data.apiKey);
       setStage("revealed");
     } catch (err: any) {
       setError(err.message ?? "Something went wrong. Please try again.");
@@ -288,5 +288,3 @@ const GetStartedPage: React.FC = () => {
     </div>
   );
 };
-
-export default GetStartedPage;
