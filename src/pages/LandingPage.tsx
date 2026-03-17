@@ -50,10 +50,7 @@ const features = [
   },
 ];
 
-const accentMap: Record<
-  string,
-  { pill: string; icon: string; border: string }
-> = {
+const accentMap: Record<string, { pill: string; icon: string; border: string }> = {
   emerald: {
     pill: "bg-emerald-50 text-emerald-600 ring-emerald-200",
     icon: "text-emerald-500",
@@ -154,9 +151,7 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => (
   </div>
 );
 
-const SectionLabel: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
+const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-500/25">
     {children}
   </span>
@@ -167,6 +162,7 @@ const SectionLabel: React.FC<{ children: React.ReactNode }> = ({
 export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen">
+
       {/* ── Hero ── */}
       <section className="relative bg-[#0a1a0b] overflow-hidden">
         {/* Subtle grid pattern */}
@@ -230,8 +226,7 @@ export const LandingPage: React.FC = () => {
 
           {/* Inspired-by note */}
           <p className="mt-10 text-xs text-white/20 tracking-wide">
-            Inspired by R2-D2 — a quiet, dependable messenger that just does its
-            job.
+            Inspired by R2-D2 — a quiet, dependable messenger that just does its job.
           </p>
         </div>
       </section>
@@ -247,8 +242,7 @@ export const LandingPage: React.FC = () => {
               Built for modern applications
             </h2>
             <p className="text-sm text-gray-400 dark:text-white/40 max-w-xl mx-auto">
-              Every design decision in R2-Notify was made with production
-              systems in mind.
+              Every design decision in R2-Notify was made with production systems in mind.
             </p>
           </div>
 
@@ -260,17 +254,11 @@ export const LandingPage: React.FC = () => {
                   key={title}
                   className={`group rounded-xl border border-gray-100 dark:border-white/8 bg-white dark:bg-gray-800 p-5 transition-all duration-200 hover:shadow-sm ${a.border}`}
                 >
-                  <div
-                    className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ring-1 mb-4 ${a.pill}`}
-                  >
+                  <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ring-1 mb-4 ${a.pill}`}>
                     <Icon className={`w-4 h-4 ${a.icon}`} />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-white/80 mb-1.5">
-                    {title}
-                  </h3>
-                  <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
-                    {description}
-                  </p>
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-white/80 mb-1.5">{title}</h3>
+                  <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">{description}</p>
                 </div>
               );
             })}
@@ -289,8 +277,7 @@ export const LandingPage: React.FC = () => {
               Three layers, intentionally decoupled
             </h2>
             <p className="text-sm text-gray-400 dark:text-white/40 max-w-xl mx-auto">
-              Use all three together, or just the parts you need. Each layer has
-              a single responsibility.
+              Use all three together, or just the parts you need. Each layer has a single responsibility.
             </p>
           </div>
 
@@ -302,25 +289,17 @@ export const LandingPage: React.FC = () => {
                   key={name}
                   className="flex items-start gap-4 rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 px-5 py-4 hover:shadow-sm transition-shadow"
                 >
-                  <div
-                    className={`flex items-center justify-center w-9 h-9 rounded-lg ring-1 shrink-0 mt-0.5 ${a.pill}`}
-                  >
+                  <div className={`flex items-center justify-center w-9 h-9 rounded-lg ring-1 shrink-0 mt-0.5 ${a.pill}`}>
                     <Icon className={`w-4 h-4 ${a.icon}`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-gray-800 dark:text-white/80 font-mono">
-                        {name}
-                      </span>
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-medium ring-1 ${a.pill}`}
-                      >
+                      <span className="text-sm font-semibold text-gray-800 dark:text-white/80 font-mono">{name}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ring-1 ${a.pill}`}>
                         {tag}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
-                      {desc}
-                    </p>
+                    <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">{desc}</p>
                   </div>
                   {npm && (
                     <a
@@ -343,13 +322,9 @@ export const LandingPage: React.FC = () => {
             <div className="flex items-start gap-3">
               <CircleStackIcon className="w-4 h-4 text-gray-300 dark:text-white/25 shrink-0 mt-px" />
               <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
-                Future framework wrappers (Angular, Vue, etc.) can be added on
-                top of{" "}
-                <code className="text-emerald-600 dark:text-emerald-400 text-[11px]">
-                  r2-notify-client
-                </code>{" "}
-                without any changes to the core client or server — the protocol
-                stays stable.
+                Future framework wrappers (Angular, Vue, etc.) can be added on top of{" "}
+                <code className="text-emerald-600 dark:text-emerald-400 text-[11px]">r2-notify-client</code>{" "}
+                without any changes to the core client or server — the protocol stays stable.
               </p>
             </div>
           </div>
@@ -431,10 +406,7 @@ export const LandingPage: React.FC = () => {
                   "Prefer event-driven over polling architectures",
                   "Self-hosting is a priority",
                 ].map((t) => (
-                  <li
-                    key={t}
-                    className="flex items-start gap-2 text-xs text-gray-600 dark:text-white/60"
-                  >
+                  <li key={t} className="flex items-start gap-2 text-xs text-gray-600 dark:text-white/60">
                     <span className="mt-px text-emerald-500 shrink-0">→</span>
                     {t}
                   </li>
@@ -453,10 +425,7 @@ export const LandingPage: React.FC = () => {
                   "Want a fully managed SaaS notification service",
                   "Tightly coupled to a single UI framework is acceptable",
                 ].map((t) => (
-                  <li
-                    key={t}
-                    className="flex items-start gap-2 text-xs text-gray-400 dark:text-white/35"
-                  >
+                  <li key={t} className="flex items-start gap-2 text-xs text-gray-400 dark:text-white/35">
                     <span className="mt-px shrink-0">–</span>
                     {t}
                   </li>
@@ -464,6 +433,89 @@ export const LandingPage: React.FC = () => {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── Get Started ── */}
+      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-white/8 py-20">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-12 space-y-3">
+            <SectionLabel>
+              <ArrowRightIcon className="w-3 h-3" /> Get Started
+            </SectionLabel>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white/90 tracking-tight">
+              Up and running in four steps
+            </h2>
+            <p className="text-sm text-gray-400 dark:text-white/40 max-w-xl mx-auto">
+              No complex setup. Just a key, a connection, and you're live.
+            </p>
+          </div>
+
+          <div className="space-y-0">
+              {[
+                {
+                  step: "1",
+                  title: "Generate your API key",
+                  desc: "Go to Manage Key, sign in, and generate a personal API key. Copy it immediately — it's shown only once.",
+                  action: { label: "Go to Manage Key →", to: "/manage-key" },
+                  accent: "bg-violet-50 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400 ring-violet-200 dark:ring-violet-500/25",
+                  isLast: false,
+                },
+                {
+                  step: "2",
+                  title: "Open the Playground",
+                  desc: "Head to the Playground, paste your API key, and connect. The Live indicator will turn green.",
+                  action: { label: "Open Playground →", to: "/playground" },
+                  accent: "bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/25",
+                  isLast: false,
+                },
+                {
+                  step: "3",
+                  title: "Send a test notification",
+                  desc: "Use the Send Notification form to fire a real-time event. Set an App Key, Group Key, message, and type, then hit Send.",
+                  action: null,
+                  accent: "bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 ring-blue-200 dark:ring-blue-500/25",
+                  isLast: false,
+                },
+                {
+                  step: "4",
+                  title: "Integrate into your app",
+                  desc: "Install r2-notify-client or r2-notify-react, point it at your server, and start receiving notifications in your own application.",
+                  action: null,
+                  accent: "bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 ring-amber-200 dark:ring-amber-500/25",
+                  isLast: true,
+                },
+              ].map(({ step, title, desc, action, accent, isLast }) => (
+                <div key={step} className="flex gap-4 sm:gap-6">
+                  {/* Left column: circle + line */}
+                  <div className="flex flex-col items-center">
+                    <span className={`flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold ring-1 shrink-0 relative z-10 ${accent}`}>
+                      {step}
+                    </span>
+                    {!isLast && (
+                      <div className="w-px grow bg-gray-200 dark:bg-white/10 my-1" />
+                    )}
+                  </div>
+                  {/* Right column: content */}
+                  <div className={`flex-1 pt-1 ${isLast ? "pb-0" : "pb-8"}`}>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-white/85 mb-1">
+                      {title}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-white/40 leading-relaxed">
+                      {desc}
+                    </p>
+                    {action && (
+                      <Link
+                        to={action.to}
+                        className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
+                      >
+                        {action.label}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
         </div>
       </section>
 
@@ -503,18 +555,9 @@ export const LandingPage: React.FC = () => {
           {/* Packages */}
           <div className="pt-6 border-t border-white/8 flex flex-wrap justify-center gap-4">
             {[
-              {
-                label: "r2-notify-server",
-                href: "https://github.com/sheranthaperera93/r2-notify-demo",
-              },
-              {
-                label: "r2-notify-client",
-                href: "https://www.npmjs.com/package/r2-notify-client",
-              },
-              {
-                label: "r2-notify-react",
-                href: "https://www.npmjs.com/package/r2-notify-react",
-              },
+              { label: "r2-notify-server", href: "https://github.com/sheranthaperera93/r2-notify-demo" },
+              { label: "r2-notify-client", href: "https://www.npmjs.com/package/r2-notify-client" },
+              { label: "r2-notify-react", href: "https://www.npmjs.com/package/r2-notify-react" },
             ].map(({ label, href }) => (
               <a
                 key={label}

@@ -5,8 +5,9 @@ import { R2NotifyProvider } from "r2-notify-react";
 import { env } from "./config/env";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PlaygroundPage from "./pages/PlaygroundPage";
-import { GetStartedPage } from "./pages/GetStartedPage";
 import { LandingPage } from "./pages/LandingPage";
+import { ManageKeyPage } from "./pages/ManageKeyPage";
+import { Footer } from "./components/Footer";
 
 const App: React.FC = () => {
   const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
@@ -38,13 +39,10 @@ const App: React.FC = () => {
                   />
                 }
               />
-              <Route path="/get-started" element={<GetStartedPage />} />
+              <Route path="/api-keys" element={<ManageKeyPage />} />
             </Routes>
           </main>
-
-          <footer className="py-4 border-t border-gray-100 dark:border-white/8 text-center text-xs text-gray-300 dark:text-white/20">
-            &copy; {new Date().getFullYear()} R2 Notify. All rights reserved.
-          </footer>
+          <Footer />
         </div>
       </R2NotifyProvider>
     </BrowserRouter>

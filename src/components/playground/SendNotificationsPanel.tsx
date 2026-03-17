@@ -1,7 +1,7 @@
 // src/components/SendNotificationsPanel.tsx
 import React, { useState } from "react";
 import { useNotifications } from "r2-notify-react";
-import { env } from "../config/env";
+import { env } from "../../config/env";
 import {
   PaperAirplaneIcon,
   KeyIcon,

@@ -1,8 +1,8 @@
 // src/pages/PlaygroundPage.tsx
 import React from "react";
-import { ConnectionPanel } from "../components/ConnectionPanel";
-import DebugLogPanel from "../components/DebugLogPanel";
-import { SendNotificationForm } from "../components/SendNotificationsPanel";
+import { ConnectionPanel } from "../components/playground/ConnectionPanel";
+import DebugLogPanel from "../components/playground/DebugLogPanel";
+import { SendNotificationForm } from "../components/playground/SendNotificationsPanel";
 
 const PlaygroundPage: React.FC<{
   autoConnect: boolean;

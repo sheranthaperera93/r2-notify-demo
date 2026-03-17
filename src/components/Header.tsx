@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import { useNotifications } from "r2-notify-react";
 import React, {
   useCallback,
@@ -13,7 +12,7 @@ import { deDuplicateAndSort, groupNotifications } from "./notifications/utils";
 import { BellIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { BellIcon as BellIconSolid } from "@heroicons/react/24/solid";
 import { NavLink } from "react-router-dom";
-import { BeakerIcon, KeyIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { BeakerIcon, Cog6ToothIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "../context/ThemeContext";
 
 export const Header: React.FC = () => {
@@ -21,8 +20,7 @@ export const Header: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
   const processedNewNotificationsRef = useRef<Set<string>>(new Set());
 
-  const { listNotifications, newNotification, isConnected } =
-    useNotifications();
+  const { listNotifications, newNotification, isConnected } = useNotifications();
   const toggleCenter = useCallback(() => setIsCenterOpen((prev) => !prev), []);
   const { theme, toggleTheme } = useTheme();
 
@@ -65,6 +63,7 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0f1f10]/90 backdrop-blur-md">
       <div className="container mx-auto px-6 h-14 flex items-center justify-between gap-4">
+
         {/* Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 ring-1 ring-emerald-500/30">
@@ -90,15 +89,30 @@ export const Header: React.FC = () => {
             <BeakerIcon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Playground</span>
           </NavLink>
-          <NavLink to="/get-started" className={navLinkClass}>
-            <KeyIcon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Get Started</span>
+          <NavLink to="/api-keys" className={navLinkClass}>
+            <Cog6ToothIcon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">API Keys</span>
           </NavLink>
         </nav>
 
         {/* Right side */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Theme toggle — pill with sun + moon, active side highlighted */}
+          <div
+            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-500 ${
+              isConnected
+                ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20"
+                : "bg-white/5 text-white/30 ring-1 ring-white/10"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isConnected ? "bg-emerald-400 animate-pulse" : "bg-white/20"
+              }`}
+            />
+            {isConnected ? "Live" : "Offline"}
+          </div>
+
+          {/* Theme toggle pill */}
           <div className="flex items-center rounded-full ring-1 ring-white/10 bg-white/5 p-0.5">
             <button
               onClick={() => theme === "dark" && toggleTheme()}
@@ -124,30 +138,12 @@ export const Header: React.FC = () => {
             </button>
           </div>
 
-          {/* Connection status pill */}
-          <div
-            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-500 ${
-              isConnected
-                ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20"
-                : "bg-white/5 text-white/30 ring-1 ring-white/10"
-            }`}
-          >
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                isConnected ? "bg-emerald-400 animate-pulse" : "bg-white/20"
-              }`}
-            />
-            {isConnected ? "Live" : "Offline"}
-          </div>
-
           {/* Bell */}
           {isConnected && (
             <div className="relative">
               <button
                 onClick={toggleCenter}
-                title={
-                  isCenterOpen ? "Close notifications" : "Open notifications"
-                }
+                title={isCenterOpen ? "Close notifications" : "Open notifications"}
                 className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
                   isCenterOpen
                     ? "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30"
@@ -164,11 +160,8 @@ export const Header: React.FC = () => {
 
               {isCenterOpen && (
                 <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setIsCenterOpen(false)}
-                  />
-                  <div className="absolute top-10 right-0 z-50">
+                  <div className="fixed inset-0 z-40" onClick={() => setIsCenterOpen(false)} />
+                  <div className="absolute top-10 right-0 z-50" onClick={(e) => e.stopPropagation()}>
                     <NotificationCenter
                       notifications={groupedNotifications}
                       onClose={() => setIsCenterOpen(false)}
