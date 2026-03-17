@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { KeyIcon, ArrowRightOnRectangleIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  KeyIcon,
+  ExclamationCircleIcon,
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 import { useAuth } from "../../context/AuthContext";
 import { Spinner } from "./Shared";
 import { KeyDetails, KeyInfo } from "./KeyDetails";
@@ -17,7 +21,9 @@ export const KeyDashboard: React.FC = () => {
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  useEffect(() => { fetchKeyDetails(); }, []);
+  useEffect(() => {
+    fetchKeyDetails();
+  }, []);
 
   const fetchKeyDetails = async () => {
     setKeyStage("loading");
@@ -42,7 +48,9 @@ export const KeyDashboard: React.FC = () => {
       });
       setKeyStage("exists");
       // ---------------
-    } catch { setKeyStage("none"); }
+    } catch {
+      setKeyStage("none");
+    }
   };
 
   const handleGenerate = async () => {
@@ -66,7 +74,9 @@ export const KeyDashboard: React.FC = () => {
       setKeyStage("revealed");
     } catch (err: any) {
       setGenerateError(err.message ?? "Something went wrong.");
-    } finally { setGenerateLoading(false); }
+    } finally {
+      setGenerateLoading(false);
+    }
   };
 
   const handleRevoke = async () => {
@@ -111,7 +121,6 @@ export const KeyDashboard: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-
       {/* Page heading */}
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
@@ -120,14 +129,16 @@ export const KeyDashboard: React.FC = () => {
           </h1>
           <p className="text-sm text-gray-400 dark:text-white/40">
             Signed in as{" "}
-            <span className="font-medium text-gray-600 dark:text-white/60">{user?.username}</span>
+            <span className="font-medium text-gray-600 dark:text-white/60">
+              {user?.username}
+            </span>
           </p>
         </div>
         <button
           onClick={logout}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-white/8 ring-1 ring-gray-200 dark:ring-white/10 transition-colors focus:outline-none"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-800 dark:hover:bg-white/8 ring-1 ring-gray-200 dark:ring-white/10 transition-colors focus:outline-none"
         >
-          <ArrowRightOnRectangleIcon className="w-3.5 h-3.5" /> Sign out
+          <ArrowRightStartOnRectangleIcon className="w-3.5 h-3.5" /> Sign out
         </button>
       </div>
 
@@ -135,7 +146,9 @@ export const KeyDashboard: React.FC = () => {
       {keyStage === "loading" && (
         <div className="rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 shadow-sm px-5 py-12 flex flex-col items-center gap-3">
           <Spinner />
-          <p className="text-sm text-gray-400 dark:text-white/30">Loading your key details…</p>
+          <p className="text-sm text-gray-400 dark:text-white/30">
+            Loading your key details…
+          </p>
         </div>
       )}
 
@@ -146,8 +159,12 @@ export const KeyDashboard: React.FC = () => {
             <KeyIcon className="w-6 h-6 text-gray-300 dark:text-white/20" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-700 dark:text-white/70">No API key yet</p>
-            <p className="text-xs text-gray-400 dark:text-white/35 mt-0.5">Generate one to start using R2 Notify.</p>
+            <p className="text-sm font-semibold text-gray-700 dark:text-white/70">
+              No API key yet
+            </p>
+            <p className="text-xs text-gray-400 dark:text-white/35 mt-0.5">
+              Generate one to start using R2 Notify.
+            </p>
           </div>
           {generateError && (
             <div className="flex items-start gap-2 w-full rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-3.5 py-2.5 text-xs text-red-600 dark:text-red-400">

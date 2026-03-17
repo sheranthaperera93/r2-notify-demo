@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextValue>({
 
 export const useAuth = () => useContext(AuthContext);
 
-const STORAGE_KEY = "r2-auth-session";
+const STORAGE_KEY = "r2-notify-auth-session";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
