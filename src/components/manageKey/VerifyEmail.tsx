@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { env } from "../../config/env";
-
-type Status = "verifying" | "success" | "error" | "missing";
+import { Status } from "../../utils/interfaces";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();

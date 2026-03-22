@@ -6,7 +6,6 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Spinner, PasswordInput, inputClass } from "./Shared";
-import { env } from "../../config/env";
 import authClient from "../../api/authClient";
 
 interface Props {

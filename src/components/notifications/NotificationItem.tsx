@@ -2,8 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import { CheckIcon, TrashIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import NotificationStatusBorder from "./NotificationStatusBorder";
-import { formatDate } from "./utils";
 import { NotificationMessage } from "r2-notify-client";
+import { formatDate } from "../../utils/utils";
 
 type Props = {
   item: NotificationMessage;
@@ -32,7 +32,7 @@ export default function NotificationItem({ item, onMarkRead, onDelete }: Props) 
           <p className={`text-sm truncate ${item.readStatus ? "text-gray-400 dark:text-white/25" : "text-gray-700 dark:text-white/70"}`}>
             {item.message}
           </p>
-          <p className="text-[11px] text-gray-400 dark:text-white/25 mt-0.5">{formatDate(item.createdAt)}</p>
+          <p className="text-[11px] text-gray-400 dark:text-white/25 mt-0.5">{formatDate(parseInt(item.createdAt))}</p>
         </div>
         <div className="relative shrink-0" ref={menuRef}>
           <button onClick={(e) => { e.stopPropagation(); setOpen((p) => !p); }} className="p-1 rounded-md text-gray-300 dark:text-white/20 hover:text-gray-500 dark:hover:text-white/50 hover:bg-gray-100 dark:hover:bg-white/8 transition-colors focus:outline-none">

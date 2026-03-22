@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { StatCard } from "./Shared";
 import { KeyDetail } from "../../utils/interfaces";
-import { formatDate } from "../../utils/utilFunctions";
+import { formatDate, maskKeyValue } from "../../utils/utils";
 
 interface Props {
   details: KeyDetail;
@@ -47,7 +47,7 @@ export const KeyDetails: React.FC<Props> = ({ details }) => (
       </div>
       <div className="flex items-center gap-2 rounded-lg bg-gray-950 border border-gray-800 px-4 py-3 mb-4">
         <code className="flex-1 text-xs text-gray-400 font-mono truncate">
-          Value: {details.start}
+          Value: {maskKeyValue(details.start)}
         </code>
       </div>
 
@@ -62,13 +62,13 @@ export const KeyDetails: React.FC<Props> = ({ details }) => (
         <StatCard
           icon={ClockIcon}
           label="Last used"
-          value={formatDate(details.last_user_at)}
+          value={formatDate(details.last_used)}
           accent="text-blue-400"
         />
         <StatCard
           icon={ChartBarIcon}
-          label="Total verifications"
-          value={details.totalVerifications.toString()}
+          label="Remaining Requests"
+          value={details.requests_remaining.toString()}
           accent="text-emerald-400"
         />
       </div>

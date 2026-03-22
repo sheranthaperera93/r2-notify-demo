@@ -36,7 +36,7 @@ const ConfigurationPanel: React.FC = () => {
   if (configEntries.length === 0) return null;
 
   return (
-    <div className="border-b border-gray-100 dark:border-white/8 bg-gray-50/60 dark:bg-white/3 px-4 py-3 space-y-3">
+   <div className="border-b border-gray-100 dark:border-white/8 bg-gray-50/60 dark:bg-gray-800/60 px-4 py-3 space-y-3">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1.5 w-36 shrink-0">
           <FingerPrintIcon className="w-3.5 h-3.5 text-gray-300 dark:text-white/20" />

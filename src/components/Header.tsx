@@ -8,12 +8,12 @@ import React, {
 } from "react";
 import { NotificationCenter } from "../components/notifications/NotificationCenter";
 import { NotificationApp, NotificationMessage } from "r2-notify-client";
-import { deDuplicateAndSort, groupNotifications } from "./notifications/utils";
 import { BellIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { BellIcon as BellIconSolid } from "@heroicons/react/24/solid";
 import { NavLink } from "react-router-dom";
 import { BeakerIcon, Cog6ToothIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "../context/ThemeContext";
+import { deDuplicateAndSort, groupNotifications } from "../utils/utils";
 
 export const Header: React.FC = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false);
