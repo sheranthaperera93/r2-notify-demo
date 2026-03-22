@@ -8,6 +8,7 @@ import PlaygroundPage from "./pages/PlaygroundPage";
 import { LandingPage } from "./pages/LandingPage";
 import { ManageKeyPage } from "./pages/ManageKeyPage";
 import { Footer } from "./components/Footer";
+import VerifyEmail from "./components/manageKey/VerifyEmail";
 
 const App: React.FC = () => {
   const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
@@ -40,6 +41,7 @@ const App: React.FC = () => {
                 }
               />
               <Route path="/api-keys" element={<ManageKeyPage />} />
+              <Route path="/api-keys/verify-email" element={<VerifyEmail />} />
             </Routes>
           </main>
           <Footer />

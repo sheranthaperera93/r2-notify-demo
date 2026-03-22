@@ -35,24 +35,34 @@ export const SignInForm: React.FC<Props> = ({ onSwitchToRegister }) => {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-gray-500 dark:text-white/40">Username</label>
+        <label className="text-xs font-medium text-gray-500 dark:text-white/40">
+          Username
+        </label>
         <input
           type="text"
           value={username}
-          onChange={(e) => { setUsername(e.target.value); setError(null); }}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setError(null);
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           disabled={isLoading}
-          placeholder="your username"
+          placeholder="your-username"
           className={inputClass}
           autoFocus
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-gray-500 dark:text-white/40">Password</label>
+        <label className="text-xs font-medium text-gray-500 dark:text-white/40">
+          Password
+        </label>
         <PasswordInput
           value={password}
-          onChange={(v) => { setPassword(v); setError(null); }}
+          onChange={(v) => {
+            setPassword(v);
+            setError(null);
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           disabled={isLoading}
           placeholder="••••••••"
@@ -72,7 +82,15 @@ export const SignInForm: React.FC<Props> = ({ onSwitchToRegister }) => {
         disabled={!username.trim() || !password.trim() || isLoading}
         className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {isLoading ? <><Spinner /> Signing in…</> : <><KeyIcon className="w-4 h-4" /> Sign In</>}
+        {isLoading ? (
+          <>
+            <Spinner /> Signing in…
+          </>
+        ) : (
+          <>
+            <KeyIcon className="w-4 h-4" /> Sign In
+          </>
+        )}
       </button>
 
       <p className="text-center text-xs text-gray-400 dark:text-white/25 mt-1">

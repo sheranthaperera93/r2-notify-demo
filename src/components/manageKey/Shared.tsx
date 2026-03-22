@@ -58,10 +58,3 @@ export const PasswordInput: React.FC<{
 export const inputClass =
   "w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-sm text-gray-800 dark:text-white/80 placeholder-gray-300 dark:placeholder-white/20 bg-white dark:bg-gray-800/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/60 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed";
 
-export function formatDate(iso: string | null) {
-  if (!iso) return "Never";
-  return new Date(iso).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}

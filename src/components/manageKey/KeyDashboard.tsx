@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   KeyIcon,
   ExclamationCircleIcon,
@@ -6,48 +6,53 @@ import {
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../../context/AuthContext";
 import { Spinner } from "./Shared";
-import { KeyDetails, KeyInfo } from "./KeyDetails";
+import { KeyDetails } from "./KeyDetails";
 import { KeyRevealed } from "./KeyRevealed";
 import { KeyActions } from "./KeyActions";
-
-type KeyStage = "loading" | "exists" | "none" | "revealed" | "dismissed";
+import authClient from "../../api/authClient";
+import { KeyDetail, KeyStage } from "../../utils/interfaces";
 
 export const KeyDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [keyStage, setKeyStage] = useState<KeyStage>("loading");
-  const [keyDetails, setKeyDetails] = useState<KeyInfo | null>(null);
+  const [keyDetails, setKeyDetails] = useState<KeyDetail | null>(null);
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
   const [generateLoading, setGenerateLoading] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (!user) return;
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     fetchKeyDetails();
-  }, []);
+  }, [user]);
 
   const fetchKeyDetails = async () => {
     setKeyStage("loading");
     try {
-      // TODO: replace with real endpoint
-      // const res = await fetch(`${env.r2NotifySvrUrl}/api/key/details`, {
-      //   headers: { Authorization: `Bearer ${user!.token}` },
-      // });
-      // if (res.status === 404) { setKeyStage("none"); return; }
-      // if (!res.ok) throw new Error("Failed to load key details");
-      // const data = await res.json();
-      // setKeyDetails(data); setKeyStage("exists");
+      const { data } = await authClient.get("/keys");
+      const keys: KeyDetail[] = data.keys ?? [];
 
-      // --- STUBBED ---
-      await new Promise((r) => setTimeout(r, 600));
+      if (keys.length === 0) {
+        setKeyStage("none");
+        return;
+      }
+
+      const k = keys[0];
       setKeyDetails({
-        keyId: "key_abc123xyz",
-        maskedKey: "r2_••••••••••••••••••••••••••••••••abc1",
-        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        lastUsedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        totalVerifications: 142,
+        key_id: k.key_id,
+        start: k.start + "•••••••" + k.key_id.slice(-7),
+        enabled: k.enabled,
+        name: k.name,
+        created: new Date(k.created).getTime(), // convert to ms
+        last_user_at: k.last_user_at
+          ? new Date(k.last_user_at).getTime()
+          : null, // convert to ms
+        totalVerifications: 0,
       });
       setKeyStage("exists");
-      // ---------------
     } catch {
       setKeyStage("none");
     }
@@ -57,23 +62,15 @@ export const KeyDashboard: React.FC = () => {
     setGenerateLoading(true);
     setGenerateError(null);
     try {
-      // TODO: replace with real endpoint
-      // const res = await fetch(`${env.r2NotifySvrUrl}/api/key`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${user!.token}` },
-      //   body: JSON.stringify({ userId: user!.userId }),
-      // });
-      // if (!res.ok) throw new Error((await res.json()).message ?? "Failed to generate key");
-      // setNewApiKey((await res.json()).apiKey);
-
-      // --- STUBBED ---
-      await new Promise((r) => setTimeout(r, 800));
-      setNewApiKey(`r2_live_stubkey_${Date.now()}_abc123xyz`);
-      // ---------------
-
+      const { data } = await authClient.post("/keys", {
+        name: `${user?.username}-key`,
+      });
+      setNewApiKey(data.key);
       setKeyStage("revealed");
     } catch (err: any) {
-      setGenerateError(err.message ?? "Something went wrong.");
+      setGenerateError(
+        err.response?.data?.error ?? err.message ?? "Something went wrong.",
+      );
     } finally {
       setGenerateLoading(false);
     }
@@ -81,41 +78,56 @@ export const KeyDashboard: React.FC = () => {
 
   const handleRevoke = async () => {
     setActionError(null);
-    // TODO: replace with real endpoint
-    // await fetch(`${env.r2NotifySvrUrl}/api/key`, {
-    //   method: "DELETE",
-    //   headers: { Authorization: `Bearer ${user!.token}` },
-    // });
-
-    // --- STUBBED ---
-    await new Promise((r) => setTimeout(r, 600));
-    // ---------------
-
-    setKeyDetails(null);
-    setKeyStage("none");
+    if (!keyDetails) return;
+    try {
+      await authClient.delete(`/keys/${keyDetails.key_id}`);
+      setKeyDetails(null);
+      setKeyStage("none");
+    } catch (err: any) {
+      setActionError(
+        err.response?.data?.error ?? err.message ?? "Failed to revoke key.",
+      );
+    }
   };
 
   const handleRegenerate = async () => {
     setActionError(null);
-    // TODO: replace with real endpoint
-    // const res = await fetch(`${env.r2NotifySvrUrl}/api/key/regenerate`, {
-    //   method: "POST",
-    //   headers: { Authorization: `Bearer ${user!.token}` },
-    // });
-    // if (!res.ok) throw new Error((await res.json()).message ?? "Failed to regenerate");
-    // setNewApiKey((await res.json()).apiKey);
+    if (!keyDetails) return;
+    try {
+      await authClient.delete(`/keys/${keyDetails.key_id}`);
 
-    // --- STUBBED ---
-    await new Promise((r) => setTimeout(r, 800));
-    setNewApiKey(`r2_live_regenerated_${Date.now()}_xyz789`);
-    // ---------------
-
-    setKeyStage("revealed");
+      const { data } = await authClient.post("/keys", {
+        name: `${user?.username}-key`,
+      });
+      setNewApiKey(data.key);
+      setKeyStage("revealed");
+    } catch (err: any) {
+      setActionError(
+        err.response?.data?.error ?? err.message ?? "Failed to regenerate key.",
+      );
+    }
   };
+
+  const handleKeyStatusToggle = async () => {
+    setActionError(null);
+    if (!keyDetails) return;
+    try {
+      await authClient.patch(`/keys/${keyDetails.key_id}`, {
+        enabled: !keyDetails.enabled,
+      });
+      // Update local state to reflect change immediately
+      setKeyDetails({ ...keyDetails, enabled: !keyDetails.enabled });
+    } catch (err: any) {
+      setActionError(
+        err.response?.data?.error ?? err.message ?? "Failed to update key status.",
+      );
+    }
+  }
 
   const handleDismiss = () => {
     setNewApiKey(null);
     setKeyStage("dismissed");
+    hasFetched.current = false; // allow re-fetch after dismiss
     fetchKeyDetails();
   };
 
@@ -195,7 +207,9 @@ export const KeyDashboard: React.FC = () => {
           <KeyActions
             onRegenerate={handleRegenerate}
             onRevoke={handleRevoke}
+            onStatusToggle={handleKeyStatusToggle}
             actionError={actionError}
+            keyStatus={keyDetails.enabled}
           />
         </>
       )}

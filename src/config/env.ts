@@ -1,6 +1,7 @@
 interface EnvConfig {
   wsUrl: string;
   r2NotifySvrUrl: string;
+  r2AuthSvrUrl: string;
   wsDebug: boolean;
   wsAutoConnect: boolean;
   playGroundApiKey: string;
@@ -24,6 +25,7 @@ function getEnvBool(key: string, defaultValue: boolean): boolean {
 export const env: EnvConfig = {
   wsUrl: getEnvVar("VITE_WS_URL"),
   r2NotifySvrUrl: getEnvVar("VITE_R2_NOTIFY_SVR"),
+  r2AuthSvrUrl: getEnvVar("VITE_R2_AUTH_SVR"),
   wsDebug: getEnvBool("VITE_WS_DEBUG", false),
   wsAutoConnect: getEnvBool("VITE_WS_AUTO_CONNECT", true),
   playGroundApiKey: getEnvVar("VITE_PLAYGROUND_API_KEY"),

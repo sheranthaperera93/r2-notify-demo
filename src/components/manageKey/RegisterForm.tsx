@@ -6,6 +6,8 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Spinner, PasswordInput, inputClass } from "./Shared";
+import { env } from "../../config/env";
+import authClient from "../../api/authClient";
 
 interface Props {
   onSwitchToSignIn: (prefillUsername?: string) => void;
@@ -22,28 +24,28 @@ export const RegisterForm: React.FC<Props> = ({ onSwitchToSignIn }) => {
 
   const handleRegister = async () => {
     if (!username.trim() || !email.trim() || !password || !confirm) return;
-    if (password !== confirm) { setError("Passwords do not match."); return; }
-    if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
+    if (password !== confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
 
     setError(null);
     setLoading(true);
     try {
-      // TODO: replace with real endpoint
-      // const res = await fetch(`${env.r2NotifySvrUrl}/api/auth/register`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ username: username.trim(), email: email.trim(), password }),
-      // });
-      // if (!res.ok) throw new Error((await res.json()).message ?? "Registration failed");
-
-      // --- STUBBED ---
-      await new Promise((r) => setTimeout(r, 800));
-      if (username.toLowerCase() === "taken") throw new Error("Username already taken.");
-      // ---------------
-
+      await authClient.post("/auth/register", {
+        username: username.trim(),
+        email: email.trim(),
+        password,
+      });
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message ?? "Registration failed. Please try again.");
+      setError(
+        err.response?.data?.error ?? err.message ?? "Registration failed.",
+      );
     } finally {
       setLoading(false);
     }
@@ -56,9 +58,17 @@ export const RegisterForm: React.FC<Props> = ({ onSwitchToSignIn }) => {
           <CheckCircleIcon className="w-7 h-7 text-emerald-500" />
         </div>
         <div>
-          <p className="text-base font-semibold text-gray-800 dark:text-white/85">Account created!</p>
+          <p className="text-base font-semibold text-gray-800 dark:text-white/85">
+            Check your email!
+          </p>
           <p className="text-xs text-gray-400 dark:text-white/35 mt-1">
-            You can now sign in with your credentials.
+            We sent a verification link to{" "}
+            <span className="font-medium text-gray-600 dark:text-white/50">
+              {email}
+            </span>
+            .
+            <br />
+            Verify your email before signing in.
           </p>
         </div>
         <button
@@ -84,11 +94,16 @@ export const RegisterForm: React.FC<Props> = ({ onSwitchToSignIn }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-gray-500 dark:text-white/40">Username</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-white/40">
+            Username
+          </label>
           <input
             type="text"
             value={username}
-            onChange={(e) => { setUsername(e.target.value); setError(null); }}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setError(null);
+            }}
             disabled={loading}
             placeholder="choose a username"
             className={inputClass}
@@ -96,11 +111,16 @@ export const RegisterForm: React.FC<Props> = ({ onSwitchToSignIn }) => {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-gray-500 dark:text-white/40">Email</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-white/40">
+            Email
+          </label>
           <input
             type="email"
             value={email}
-            onChange={(e) => { setEmail(e.target.value); setError(null); }}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null);
+            }}
             disabled={loading}
             placeholder="you@example.com"
             className={inputClass}
@@ -110,20 +130,30 @@ export const RegisterForm: React.FC<Props> = ({ onSwitchToSignIn }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-gray-500 dark:text-white/40">Password</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-white/40">
+            Password
+          </label>
           <PasswordInput
             value={password}
-            onChange={(v) => { setPassword(v); setError(null); }}
+            onChange={(v) => {
+              setPassword(v);
+              setError(null);
+            }}
             disabled={loading}
-            placeholder="min. 6 characters"
+            placeholder="min. 8 characters"
             className={inputClass}
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-gray-500 dark:text-white/40">Confirm Password</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-white/40">
+            Confirm Password
+          </label>
           <PasswordInput
             value={confirm}
-            onChange={(v) => { setConfirm(v); setError(null); }}
+            onChange={(v) => {
+              setConfirm(v);
+              setError(null);
+            }}
             onKeyDown={(e) => e.key === "Enter" && handleRegister()}
             disabled={loading}
             placeholder="repeat password"
@@ -141,13 +171,20 @@ export const RegisterForm: React.FC<Props> = ({ onSwitchToSignIn }) => {
 
       <button
         onClick={handleRegister}
-        disabled={!username.trim() || !email.trim() || !password || !confirm || loading}
+        disabled={
+          !username.trim() || !email.trim() || !password || !confirm || loading
+        }
         className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {loading
-          ? <><Spinner /> Creating account…</>
-          : <><UserCircleIcon className="w-4 h-4" /> Create Account</>
-        }
+        {loading ? (
+          <>
+            <Spinner /> Creating account…
+          </>
+        ) : (
+          <>
+            <UserCircleIcon className="w-4 h-4" /> Create Account
+          </>
+        )}
       </button>
 
       <p className="text-center text-xs text-gray-400 dark:text-white/25">

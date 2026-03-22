@@ -1,15 +1,17 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
+import authClient from "../api/authClient";
 
 interface AuthUser {
   username: string;
   userId: string;
   token: string;
+  refreshToken: string;
 }
 
 interface AuthContextValue {
   user: AuthUser | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -25,11 +27,12 @@ export const useAuth = () => useContext(AuthContext);
 
 const STORAGE_KEY = "r2-notify-auth-session";
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Restore session from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -42,28 +45,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (username: string, password: string) => {
     setIsLoading(true);
     try {
-      // TODO: replace with real endpoint
-      // const res = await fetch(`${env.r2NotifySvrUrl}/api/auth/login`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ username, password }),
-      // });
-      // if (!res.ok) throw new Error((await res.json()).message ?? "Login failed");
-      // const data = await res.json();
-      // const session: AuthUser = { username: data.username, userId: data.userId, token: data.token };
-
-      // --- STUBBED ---
-      await new Promise((r) => setTimeout(r, 800));
-      if (password.length < 3) throw new Error("Invalid credentials");
-      const session: AuthUser = {
+      // Step 1 — get access + refresh tokens
+      const { data: loginData } = await authClient.post("/auth/login", {
         username,
-        userId: `user_${username.toLowerCase().replace(/\s+/g, "_")}`,
-        token: `stub_token_${Date.now()}`,
+        password,
+      });
+
+      const accessToken: string = loginData.access_token;
+      const refreshToken: string = loginData.refresh_token;
+
+      // Step 2 — fetch profile for username + userId
+      const { data: meData } = await authClient.get("/user/me", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      const session: AuthUser = {
+        username: meData.username,
+        userId: meData.id,
+        token: accessToken,
+        refreshToken,
       };
-      // ---------------
 
       setUser(session);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    } catch (err: any) {
+      const message =
+        err.response?.data?.error ?? err.message ?? "Login failed";
+      throw new Error(message);
     } finally {
       setIsLoading(false);
     }
