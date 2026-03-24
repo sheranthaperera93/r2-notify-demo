@@ -31,7 +31,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ onClose,
   const totalUnread = notifications.reduce((sum, app) => sum + app.unread, 0);
 
   return (
-    <div className="w-[360px] sm:w-[400px] bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-white/10 shadow-xl flex flex-col max-h-[80vh] overflow-hidden">
+    <div className="w-[360px] sm:w-[400px] bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-white/10 shadow-xl flex flex-col h-[80vh] overflow-hidden">
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-white/8 shrink-0">
@@ -44,16 +44,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ onClose,
           )}
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={handleRefresh} className="p-1.5 rounded-md text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-white/8 transition-colors focus:outline-none">
+          <button onClick={handleRefresh} className="p-1.5 rounded-md text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
             <ArrowPathIcon className="w-4 h-4" />
           </button>
           <button
             onClick={() => setVisibleSettings((p) => !p)}
-            className={`p-1.5 rounded-md transition-colors focus:outline-none ${visibleSettings ? "text-gray-600 dark:text-white/70 bg-gray-100 dark:bg-white/10" : "text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-white/8"}`}
+            className={`p-1.5 rounded-md transition-colors focus:outline-none ${visibleSettings ? "text-gray-600 dark:text-white/70 bg-gray-100 dark:bg-white/10" : "text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
           >
             <Cog6ToothIcon className="w-4 h-4" />
           </button>
-          <button onClick={onClose} className="p-1.5 rounded-md text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-white/8 transition-colors focus:outline-none">
+          <button onClick={onClose} className="p-1.5 rounded-md text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
             <XMarkIcon className="w-4 h-4" />
           </button>
         </div>

@@ -29,7 +29,7 @@ export default function GroupAccordion({ appId, group, onMarkRead, onDelete, onI
 
   return (
     <div>
-      <div className="flex items-center pl-6 pr-2 py-1.5 hover:bg-gray-50/80 dark:hover:bg-white/4 transition-colors group">
+      <div className="flex items-center pl-3 pr-2 py-1.5 hover:bg-gray-50/80 dark:hover:bg-gray-800 transition-colors group">
         <button onClick={() => setExpanded((p) => !p)} className="flex items-center gap-1.5 flex-1 min-w-0 text-left focus:outline-none">
           <ChevronDownIcon className={`w-3.5 h-3.5 text-gray-300 dark:text-white/20 shrink-0 transition-transform duration-200 ${expanded ? "" : "-rotate-90"}`} />
           <span className="text-xs font-medium text-gray-500 dark:text-white/50 truncate">{group.groupKey}</span>
@@ -40,12 +40,12 @@ export default function GroupAccordion({ appId, group, onMarkRead, onDelete, onI
           )}
         </button>
         <div className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" ref={menuRef} onClick={(e) => e.stopPropagation()}>
-          <button onClick={(e) => { e.stopPropagation(); setMenuOpen((p) => !p); }} className="p-1 rounded-md text-gray-300 dark:text-white/20 hover:text-gray-500 dark:hover:text-white/50 hover:bg-gray-100 dark:hover:bg-white/8 transition-colors focus:outline-none">
+          <button onClick={(e) => { e.stopPropagation(); setMenuOpen((p) => !p); }} className="p-1 rounded-md text-gray-300 dark:text-white/20 hover:text-gray-500 dark:hover:text-white/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
             <EllipsisVerticalIcon className="w-3.5 h-3.5" />
           </button>
           {menuOpen && (
             <div className="absolute right-0 top-6 z-50 w-48 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-white/10 shadow-lg overflow-hidden">
-              <button onClick={(e) => { onMarkRead(e, appId, group.groupKey); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/8 transition-colors">
+              <button onClick={(e) => { onMarkRead(e, appId, group.groupKey); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <CheckIcon className="w-3.5 h-3.5 text-emerald-500" /> Mark Group as Read
               </button>
               <button onClick={(e) => { onDelete(e, appId, group.groupKey); setMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">

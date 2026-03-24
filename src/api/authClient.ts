@@ -5,7 +5,7 @@ import { env } from "../config/env";
 const STORAGE_KEY = "r2-notify-auth-session";
 
 const authClient = axios.create({
-  baseURL: `${env.r2AuthSvrUrl}/api/v1`,
+  baseURL: `${env.r2NotifySvrUrl}/api/v1`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -97,7 +97,7 @@ authClient.interceptors.response.use(
       // Call refresh endpoint directly with axios (not authClient,
       // to avoid triggering this interceptor again).
       const { data } = await axios.post(
-        `${env.r2AuthSvrUrl}/api/v1/auth/refresh`,
+        `${env.r2NotifySvrUrl}/api/v1/auth/refresh`,
         { refresh_token: session.refreshToken },
         { headers: { "Content-Type": "application/json" } },
       );

@@ -66,8 +66,8 @@ export const SendNotificationForm: React.FC<SendNotificationFormProps> = ({ apiK
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: apiKey,
           "X-App-ID": appKey,
+          "X-API-Key": apiKey
         },
         body: JSON.stringify({ groupKey, message, status }),
       });

@@ -24,7 +24,7 @@ export default function VerifyEmail() {
     const verify = async () => {
       try {
         const res = await fetch(
-          `${env.r2AuthSvrUrl}/api/v1/auth/verify-email`,
+          `${env.r2NotifySvrUrl}/api/v1/auth/verify-email`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

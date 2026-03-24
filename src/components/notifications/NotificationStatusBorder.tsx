@@ -17,7 +17,7 @@ export default function NotificationStatusBorder({
 }) {
   const borderColor = STATUS_BORDER_MAP[status] ?? "border-l-gray-300 dark:border-l-white/20";
   return (
-    <div className={`border-l-2 pl-3 ${borderColor} ${className}`}>
+    <div className={`border-l-4 pl-2 ${borderColor} ${className}`}>
       {children}
     </div>
   );
