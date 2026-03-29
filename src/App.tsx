@@ -19,7 +19,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <R2NotifyProvider
-        url={env.wsUrl}
+        serverUrl={env.r2NotifySvrUrl}
         apiKey={apiKey}
         autoConnect={autoConnect}
         debug={debug}

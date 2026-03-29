@@ -1,5 +1,4 @@
 interface EnvConfig {
-  wsUrl: string;
   r2NotifySvrUrl: string;
   wsDebug: boolean;
   wsAutoConnect: boolean;
@@ -22,17 +21,16 @@ function getEnvBool(key: string, defaultValue: boolean): boolean {
 }
 
 export const env: EnvConfig = {
-  wsUrl: getEnvVar("VITE_WS_URL"),
   r2NotifySvrUrl: getEnvVar("VITE_R2_NOTIFY_SVR"),
-  wsDebug: getEnvBool("VITE_WS_DEBUG", false),
-  wsAutoConnect: getEnvBool("VITE_WS_AUTO_CONNECT", true),
+  wsDebug: getEnvBool("VITE_R2_NOTIF_DEBUG", false),
+  wsAutoConnect: getEnvBool("VITE_R2_NOTIFY_AUTO_CONNECT", true),
   playGroundApiKey: getEnvVar("VITE_PLAYGROUND_API_KEY"),
 };
 
 if (env.wsDebug && import.meta.env.DEV) {
   console.log("WebSocket Configuration:", {
-    url: env.wsUrl,
-    debug: env.wsDebug,
-    reconnect: env.wsAutoConnect,
+    r2NotifySvrUrl: env.r2NotifySvrUrl,
+    wsDebug: env.wsDebug,
+    wsAutoConnect: env.wsAutoConnect,
   });
 }

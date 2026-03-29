@@ -3,9 +3,17 @@ import {
   NotificationGroup,
   NotificationMessage,
 } from "r2-notify-client";
+
 export function formatDate(unixTimestamp: number | null) {
   if (!unixTimestamp) return "Never";
   return new Date(unixTimestamp).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+export function formatDateString(dateString: string) {
+  return new Date(dateString).toLocaleString(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
   });

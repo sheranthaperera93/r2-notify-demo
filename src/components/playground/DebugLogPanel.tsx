@@ -15,41 +15,70 @@ export default function DebugLogPanel() {
     { id: number; level: string; message: string; timestamp: string }[]
   >([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const handlerRef = useRef<(args: unknown[], level: string) => void>(null!);
+
+  handlerRef.current = (args: unknown[], level: string) => {
+    if (
+      args.some(
+        (m) =>
+          String(m).includes("[r2 client]") || String(m).includes("[r2-react]"),
+      )
+    ) {
+      const now = new Date();
+      const timestamp = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+      const formattedMessage = args
+        .map((m) => {
+          if (typeof m === "string") return m;
+          if (typeof m === "object" && m !== null)
+            return JSON.stringify(m, null, 2);
+          return String(m);
+        })
+        .join(" ");
+      setLogs((prev) => [
+        ...prev,
+        {
+          id: now.getTime() + Math.random(),
+          level,
+          message: formattedMessage,
+          timestamp,
+        },
+      ]);
+    }
+  };
 
   useEffect(() => {
-    const logHandler = (message: any[], level: string) => {
-      if (
-        message.some(
-          (m) =>
-            m.toString().includes("[r2 client]") ||
-            m.toString().includes("[r2-react]"),
-        )
-      ) {
-        const id = new Date().getTime();
-        const now = new Date();
-        const timestamp = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
-        const formattedMessage = message
-          .map((m) => {
-            if (typeof m === "string") return m;
-            else if (typeof m === "object" && m !== null) return JSON.stringify(m, null, 2);
-            else return String(m);
-          })
-          .join(" ");
-        setLogs((prevLogs) => [...prevLogs, { id, level, message: formattedMessage, timestamp }]);
-      }
+    // Capture the real native console once — never overwrite this reference again
+    const native = { ...console };
+
+    console.debug = (...args: unknown[]) => {
+      native.debug(...args);
+      handlerRef.current(args, "debug");
+    };
+    console.log = (...args: unknown[]) => {
+      native.log(...args);
+      handlerRef.current(args, "log");
+    };
+    console.info = (...args: unknown[]) => {
+      native.info(...args);
+      handlerRef.current(args, "info");
+    };
+    console.warn = (...args: unknown[]) => {
+      native.warn(...args);
+      handlerRef.current(args, "warn");
+    };
+    console.error = (...args: unknown[]) => {
+      native.error(...args);
+      handlerRef.current(args, "error");
     };
 
-    const oldConsole = console;
-    console = {
-      ...oldConsole,
-      debug: (...args: any[]) => logHandler(args, "debug"),
-      log: (...args: any[]) => logHandler(args, "log"),
-      info: (...args: any[]) => logHandler(args, "info"),
-      warn: (...args: any[]) => logHandler(args, "warn"),
-      error: (...args: any[]) => logHandler(args, "error"),
+    return () => {
+      console.debug = native.debug;
+      console.log = native.log;
+      console.info = native.info;
+      console.warn = native.warn;
+      console.error = native.error;
     };
-    return () => { console = oldConsole; };
-  }, []);
+  }, []); // runs exactly once — no re-registration on clear
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -57,19 +86,46 @@ export default function DebugLogPanel() {
     }
   }, [logs]);
 
-  const levelConfig: Record<string, { icon: React.ElementType; badge: string; text: string; row: string }> = {
-    error: { icon: XCircleIcon, badge: "bg-red-50 text-red-600 ring-red-200", text: "text-red-400", row: "bg-red-950/20" },
-    warn: { icon: ExclamationTriangleIcon, badge: "bg-amber-50 text-amber-600 ring-amber-200", text: "text-amber-400", row: "bg-amber-950/10" },
-    info: { icon: InformationCircleIcon, badge: "bg-blue-50 text-blue-600 ring-blue-200", text: "text-blue-400", row: "" },
-    debug: { icon: WrenchScrewdriverIcon, badge: "bg-violet-50 text-violet-600 ring-violet-200", text: "text-violet-400", row: "" },
-    log: { icon: CircleStackIcon, badge: "bg-gray-100 text-gray-500 ring-gray-200", text: "text-gray-500", row: "" },
+  const levelConfig: Record<
+    string,
+    { icon: React.ElementType; badge: string; text: string; row: string }
+  > = {
+    error: {
+      icon: XCircleIcon,
+      badge: "bg-red-50 text-red-600 ring-red-200",
+      text: "text-red-400",
+      row: "bg-red-950/20",
+    },
+    warn: {
+      icon: ExclamationTriangleIcon,
+      badge: "bg-amber-50 text-amber-600 ring-amber-200",
+      text: "text-amber-400",
+      row: "bg-amber-950/10",
+    },
+    info: {
+      icon: InformationCircleIcon,
+      badge: "bg-blue-50 text-blue-600 ring-blue-200",
+      text: "text-blue-400",
+      row: "",
+    },
+    debug: {
+      icon: WrenchScrewdriverIcon,
+      badge: "bg-violet-50 text-violet-600 ring-violet-200",
+      text: "text-violet-400",
+      row: "",
+    },
+    log: {
+      icon: CircleStackIcon,
+      badge: "bg-gray-100 text-gray-500 ring-gray-200",
+      text: "text-gray-500",
+      row: "",
+    },
   };
 
   const getConfig = (level: string) => levelConfig[level] ?? levelConfig["log"];
 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-white/8 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
-
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/8">
         <div className="flex items-center gap-2.5">
@@ -87,7 +143,6 @@ export default function DebugLogPanel() {
         </div>
         <button
           onClick={() => setLogs([])}
-          disabled={logs.length === 0}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <TrashIcon className="w-3.5 h-3.5" />
@@ -96,7 +151,10 @@ export default function DebugLogPanel() {
       </div>
 
       {/* Log output — always dark terminal regardless of theme */}
-      <div ref={scrollRef} className="bg-gray-950 h-96 overflow-y-auto font-mono text-xs">
+      <div
+        ref={scrollRef}
+        className="bg-gray-950 h-96 overflow-y-auto font-mono text-xs"
+      >
         {logs.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-2">
             <CommandLineIcon className="w-8 h-8 text-gray-700" />
@@ -108,13 +166,22 @@ export default function DebugLogPanel() {
               const config = getConfig(log.level);
               const Icon = config.icon;
               return (
-                <div key={log.id} className={`flex gap-3 items-start px-4 py-2.5 ${config.row}`}>
-                  <span className="text-gray-600 shrink-0 pt-px tabular-nums">{log.timestamp}</span>
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded ring-1 shrink-0 font-semibold uppercase tracking-wide text-[10px] ${config.badge}`}>
+                <div
+                  key={log.id}
+                  className={`flex gap-3 items-start px-4 py-2.5 ${config.row}`}
+                >
+                  <span className="text-gray-600 shrink-0 pt-px tabular-nums">
+                    {log.timestamp}
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded ring-1 shrink-0 font-semibold uppercase tracking-wide text-[10px] ${config.badge}`}
+                  >
                     <Icon className="w-3 h-3" />
                     {log.level}
                   </span>
-                  <pre className={`whitespace-pre-wrap break-words flex-1 leading-relaxed ${config.text || "text-gray-300"}`}>
+                  <pre
+                    className={`whitespace-pre-wrap break-words flex-1 leading-relaxed ${config.text || "text-gray-300"}`}
+                  >
                     {log.message}
                   </pre>
                 </div>
