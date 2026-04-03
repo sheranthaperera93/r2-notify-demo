@@ -103,6 +103,7 @@ export const KeyDetailContent: React.FC = () => {
       setConfirmToggle(false);
     } finally {
       setActionLoading(false);
+      fetchKeyDetail();
     }
   };
 
