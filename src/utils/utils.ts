@@ -1,4 +1,23 @@
-import { NotificationApp, NotificationGroup, NotificationMessage } from "r2-notify-client";
+import {
+  NotificationApp,
+  NotificationGroup,
+  NotificationMessage,
+} from "r2-notify-client";
+
+export function formatDate(unixTimestamp: number | null) {
+  if (!unixTimestamp) return "Never";
+  return new Date(unixTimestamp).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+export function formatDateString(dateString: string) {
+  return new Date(dateString).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
 
 export function parseTime(s?: string) {
   if (!s) return 0;
@@ -6,19 +25,21 @@ export function parseTime(s?: string) {
   return Number.isFinite(t) ? t : 0;
 }
 
-export function formatDate(dateString?: string) {
-  if (!dateString) return "N/A";
-  try {
-    return new Date(dateString).toLocaleString();
-  } catch {
-    return dateString ?? "";
-  }
-};
+export function maskKeyValue(keyStart: string) {
+  return keyStart + "******************";
+}
 
-export function groupNotifications(all: NotificationMessage[]): NotificationApp[] {
+export function groupNotifications(
+  all: NotificationMessage[],
+): NotificationApp[] {
   const apps = new Map<
     string,
-    { latest: number; unread: number; total: number; groups: Map<string, NotificationGroup> }
+    {
+      latest: number;
+      unread: number;
+      total: number;
+      groups: Map<string, NotificationGroup>;
+    }
   >();
 
   for (const n of all) {
@@ -75,7 +96,7 @@ export function groupNotifications(all: NotificationMessage[]): NotificationApp[
 
 /** Dedup + newest-first sort for your flat source of truth */
 export function deDuplicateAndSort(
-  merged: NotificationMessage[]
+  merged: NotificationMessage[],
 ): NotificationMessage[] {
   const byId = new Map<string, NotificationMessage>();
   for (const n of merged) {
@@ -83,7 +104,10 @@ export function deDuplicateAndSort(
     if (!existing) {
       byId.set(n.id, n);
     } else {
-      const te = Math.max(parseTime(existing.createdAt), parseTime(existing.updatedAt));
+      const te = Math.max(
+        parseTime(existing.createdAt),
+        parseTime(existing.updatedAt),
+      );
       const tn = Math.max(parseTime(n.createdAt), parseTime(n.updatedAt));
       if (tn >= te) byId.set(n.id, n);
     }

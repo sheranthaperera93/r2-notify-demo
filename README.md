@@ -1,187 +1,207 @@
-# R2 Notify - Notification System
+# r2-notify-demo
 
-A sample React application for testing the `r2-notify-react` notification library.
+The official demo application for the R2-Notify real-time notification platform. It serves two purposes — a public-facing landing page that explains the project, and a live playground where you can connect over WebSocket, send test notifications, and see them arrive in real time.
+
+Built with React, Vite, and Tailwind CSS. Uses [`r2-notify-react`](https://www.npmjs.com/package/r2-notify-react) as the notification layer.
+
+🔗 **Live demo:** https://r2-notify-demo.onrender.com
+
+---
 
 ## Features
 
-- 🔌 **WebSocket Connection Management** - Connect to the R2 Notify server with configurable URL and client ID
-- 📬 **Notifications Dashboard** - View all incoming notifications in real-time
-- ⚙️ **Configuration Panel** - Load and inspect server configurations
-- 🎨 **Modern UI** - Clean and responsive interface with gradient backgrounds
-- ⚡ **Hot Module Replacement** - Fast development with Vite
+- 🏠 **Landing page** — overview of the R2-Notify platform, architecture, integration examples, and getting started guide
+- 🔌 **Playground** — connect to a live r2-notify-server, toggle auto-connect and debug mode, and see real-time WebSocket activity
+- 📬 **Send notifications** — fire test notifications directly from the browser via the REST API
+- 🔑 **API key management** — register, log in, and manage your API keys
+- 🐛 **Debug console** — live WebSocket activity log filtered to r2-notify events
+- 🌙 **Dark mode** — system preference detection with manual toggle, persisted to localStorage
 
-## Getting Started
+---
 
-### Installation
+## Prerequisites
 
-The dependencies are managed at the monorepo level. To install all dependencies:
+- Node.js 18+
+- A running [r2-notify-server](https://github.com/sheranthaperera93/r2-notify-server) instance
+
+---
+
+## Installation & Setup
+
+### 1. Clone the repository
 
 ```bash
-cd ../..
+git clone https://github.com/sheranthaperera93/r2-notify-demo.git
+cd r2-notify-demo
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
 ```
 
-### Development
+### 3. Configure environment variables
 
-Start the development server:
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in the values:
+
+```env
+VITE_R2_NOTIFY_SVR=http://localhost:8081
+VITE_R2_NOTIF_DEBUG=false
+VITE_WS_AUTO_CONNECT=false
+VITE_PLAYGROUND_API_KEY=your-api-key-here
+```
+
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-This will:
-- Start the Vite dev server on `http://localhost:5173`
-- Open the browser automatically
-- Enable hot module replacement for fast development
+The app will be available at `http://localhost:5173`.
 
-### Build
+---
 
-Create a production build:
+## Environment Variables
 
-```bash
-npm run build
-```
+| Variable                  | Required | Description                                                    |
+| ------------------------- | -------- | -------------------------------------------------------------- |
+| `VITE_R2_NOTIFY_SVR`      | yes      | Base URL of your r2-notify-server e.g. `http://localhost:8081` |
+| `VITE_R2_NOTIF_DEBUG`     | no       | Enable WebSocket debug logging. Default `false`                |
+| `VITE_WS_AUTO_CONNECT`    | no       | Auto-connect on app load. Default `false`                      |
+| `VITE_PLAYGROUND_API_KEY` | yes      | API key used in the Playground                                 |
 
-The build output will be in the `dist/` directory.
+> The app derives the WebSocket URL automatically from `VITE_R2_NOTIFY_SVR` — `http` becomes `ws`, `https` becomes `wss`. You only need one URL.
 
-### Preview
+---
 
-Preview the production build locally:
+## Pages
 
-```bash
-npm run preview
-```
+### `/` — Landing page
 
-## Architecture
+An overview of the R2-Notify platform including features, architecture diagram, code integration examples, and a getting started guide.
 
-### Components
+### `/playground` — Playground
 
-- **App** - Main component that wraps the application with `R2NotifyProvider`
-- **NotificationsDashboard** - Displays received notifications with timestamps
-- **ConfigurationPanel** - Shows server configuration and allows loading configuration
+Connect to your r2-notify-server and interact with it in real time.
 
-### Hooks Used
+- **Connection Settings** — toggle auto-connect and debug mode, connect/disconnect manually
+- **Send Notification** — fire a test notification to your connected client via the REST API
+- **Debug Console** — live log of all `[r2 client]` and `[r2-react]` WebSocket events, with level badges and timestamps. Appears when debug mode is enabled.
 
-- `useR2Notify()` - Access the notification context (client and state)
-- `useNotifications()` - Access cached notification slices
-- `useNotifyActions()` - Access action methods for the client
+### `/api-keys` — Manage API Keys
 
-## Testing the Integration
+Create and manage API keys for your account. Requires authentication (register or log in).
 
-1. **Start the R2 Notify Server**
-   ```bash
-   cd ../../r2-notify-server
-   go run main.go
-   ```
+### `/api-keys/:keyId` — Key Details
 
-2. **Start the Playground**
-   ```bash
-   npm run dev
-   ```
+View details and usage for a specific API key.
 
-3. **Connect**
-   - The app will attempt to connect to `ws://localhost:8080` by default
-   - Modify the WebSocket URL in the Connection Settings panel if needed
-   - The status badge shows the connection state (green = connected, red = disconnected)
-
-4. **Receive Notifications**
-   - Once connected, the notifications dashboard will display incoming notifications
-   - Click "🔄 Refresh" to manually fetch notifications
-   - Notifications are displayed with title, body, and timestamp
-
-5. **View Configuration**
-   - Click "📋 Load Configuration" to fetch server configurations
-   - Click "Show Raw Data" to see the raw JSON response
-
-## Configuration
-
-### WebSocket URL
-
-Default: `ws://localhost:8080`
-
-You can modify this in the Connection Settings card.
-
-### Client ID
-
-Default: Auto-generated timestamp-based ID (e.g., `client-1234567890`)
-
-This identifies your client to the server.
-
-### Auto Connect
-
-The provider is configured to automatically connect on mount. This can be controlled via the `autoConnect` prop in `App.tsx`.
-
-## Troubleshooting
-
-### Connection Failed
-
-- Ensure the R2 Notify server is running on the configured WebSocket URL
-- Check browser console for WebSocket error messages
-- Verify network connectivity
-
-### No Notifications Received
-
-- Confirm the server is sending notifications
-- Check that your client ID matches the server's expectations
-- Review server logs for any error messages
-
-### Stale Configuration
-
-- Click "Load Configuration" again to refresh
-- Check browser DevTools Network tab to see server responses
+---
 
 ## Project Structure
 
 ```
-test-app/
+r2-notify-demo/
 ├── src/
-│   ├── App.tsx                    # Main app component
-│   ├── App.css                    # App styles
-│   ├── main.tsx                   # Entry point
-│   ├── index.css                  # Global styles
-│   └── components/
-│       ├── NotificationsDashboard.tsx
-│       └── ConfigurationPanel.tsx
-├── index.html                     # HTML template
-├── vite.config.ts                 # Vite configuration
-├── tsconfig.json                  # TypeScript configuration
-├── tsconfig.node.json             # TypeScript config for Vite
-├── package.json                   # Package configuration
-└── README.md                      # This file
+│   ├── App.tsx                          # Root component — R2NotifyProvider wraps the whole app
+│   ├── main.tsx                         # Entry point
+│   ├── config/
+│   │   └── env.ts                       # Typed env var helpers
+│   ├── context/
+│   │   ├── AuthContext.tsx              # JWT auth state
+│   │   └── ThemeContext.tsx             # Dark mode state + toggle
+│   ├── pages/
+│   │   ├── LandingPage.tsx
+│   │   ├── PlaygroundPage.tsx
+│   │   ├── ManageKeyPage.tsx
+│   │   └── KeyDetailPage.tsx
+│   ├── components/
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   ├── playground/
+│   │   │   ├── ConnectionPanel.tsx      # Connect/disconnect + debug toggle
+│   │   │   ├── SendNotificationsPanel.tsx
+│   │   │   └── DebugLogPanel.tsx        # Live WebSocket activity console
+│   │   ├── notifications/
+│   │   │   ├── NotificationCenter.tsx
+│   │   │   ├── AppAccordion.tsx
+│   │   │   ├── GroupAccordion.tsx
+│   │   │   ├── NotificationItem.tsx
+│   │   │   └── ConfigurationPanel.tsx
+│   │   └── manageKey/
+│   │       ├── KeyDashboard.tsx
+│   │       ├── KeyActions.tsx
+│   │       ├── KeyDetails.tsx
+│   │       └── ...
+│   ├── api/
+│   │   └── authClient.ts                # Axios client for auth API calls
+│   └── utils/
+│       ├── interfaces.ts
+│       └── utils.ts
+├── public/
+├── .env.example
+├── index.html
+├── tailwind.config.js
+├── vite.config.ts
+└── tsconfig.json
 ```
 
-## Dependencies
+---
 
-- **react** - UI library
-- **react-dom** - React DOM rendering
-- **r2-notify-react** - React notification provider
-- **r2-notify-client** - Core WebSocket client
+## How the Notification Connection Works
 
-## DevDependencies
+The `R2NotifyProvider` is mounted at the root of the app in `App.tsx`, wrapping all routes. It receives `serverUrl` and `apiKey` from env, and auto-connects based on `VITE_WS_AUTO_CONNECT`.
 
-- **vite** - Build tool and dev server
-- **@vitejs/plugin-react** - React plugin for Vite
+On connect, the provider:
 
-## Styling
+1. POSTs the API key to `{serverUrl}/ws-token` — receives a short-lived single-use token
+2. Opens a WebSocket to `{serverUrl}/ws?token=<token>`
+3. Caches the notification list, new notifications, and config in React state
 
-The app uses a custom CSS stylesheet with:
-- Gradient background (purple theme)
-- Card-based layout
-- Responsive grid design
-- Smooth transitions and animations
-- Status badges for connection state
-- Notification item styling with hover effects
+The API key never appears in a WebSocket URL.
 
-## Browser Support
+On page refresh or reconnect, the full two-step flow runs again automatically — a fresh token is always fetched.
 
-- Modern browsers with ES2020 support
-- WebSocket support required
-- ES6+ JavaScript features
+---
 
-## Contributing
+## Available Scripts
 
-This is a test/sample application. Feel free to modify and extend it for your testing needs.
+| Command           | Description                                                  |
+| ----------------- | ------------------------------------------------------------ |
+| `npm run dev`     | Start the Vite development server on `http://localhost:5173` |
+| `npm run build`   | Create a production build in `dist/`                         |
+| `npm run preview` | Preview the production build locally                         |
+
+---
+
+## Tech Stack
+
+| Layer         | Technology                         |
+| ------------- | ---------------------------------- |
+| UI framework  | React 18                           |
+| Build tool    | Vite                               |
+| Styling       | Tailwind CSS                       |
+| Icons         | Heroicons                          |
+| Routing       | React Router v7                    |
+| Notifications | r2-notify-react + r2-notify-client |
+| Auth          | JWT via r2-notify-server           |
+
+---
+
+## Related
+
+- **[r2-notify-server](https://github.com/sheranthaperera93/r2-notify-server)** — the Go WebSocket server this app connects to
+- **[r2-notify-client](https://www.npmjs.com/package/r2-notify-client)** — framework-agnostic TypeScript client
+- **[r2-notify-react](https://www.npmjs.com/package/r2-notify-react)** — React provider and hooks
+
+---
 
 ## License
 
-See the main repository LICENSE file.
+MIT © Sherantha Perera

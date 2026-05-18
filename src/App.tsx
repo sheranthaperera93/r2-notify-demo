@@ -1,10 +1,15 @@
+// src/App.tsx
 import React, { useState } from "react";
 import { Header } from "./components/Header";
-import { ConnectionPanel } from "./components/ConnectionPanel";
 import { R2NotifyProvider } from "r2-notify-react";
 import { env } from "./config/env";
-import DebugLogPanel from "./components/DebugLogPanel";
-import { SendNotificationForm } from "./components/SendNotificationsPanel";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PlaygroundPage from "./pages/PlaygroundPage";
+import { LandingPage } from "./pages/LandingPage";
+import { ManageKeyPage } from "./pages/ManageKeyPage";
+import { Footer } from "./components/Footer";
+import VerifyEmail from "./components/manageKey/VerifyEmail";
+import { KeyDetailPage } from "./pages/KeyDetailPage";
 
 const App: React.FC = () => {
   const [autoConnect, setAutoConnect] = useState(env.wsAutoConnect);
@@ -12,45 +17,39 @@ const App: React.FC = () => {
   const apiKey = env.playGroundApiKey;
 
   return (
-    <R2NotifyProvider
-      url={env.wsUrl}
-      token={apiKey}
-      autoConnect={autoConnect}
-      debug={debug}
-    >
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
-
-        <main className="flex-1 container mx-auto px-4 py-10">
-          <div className="max-w-2xl mx-auto space-y-6">
-            {/* Page heading */}
-            <div className="space-y-1 pb-2">
-              <h1 className="text-xl font-semibold text-gray-800 tracking-tight">
-                Playground
-              </h1>
-              <p className="text-sm text-gray-400">
-                Configure your connection and send real-time notifications.
-              </p>
-            </div>
-
-            <ConnectionPanel
-              autoConnect={autoConnect}
-              setAutoConnect={() => setAutoConnect((prev) => !prev)}
-              debug={debug}
-              setDebug={() => setDebug((prev) => !prev)}
-            />
-
-            <SendNotificationForm apiKey={apiKey} />
-
-            {debug && <DebugLogPanel />}
-          </div>
-        </main>
-
-        <footer className="py-4 border-t border-gray-100 text-center text-xs text-gray-300">
-          &copy; {new Date().getFullYear()} R2 Notify. All rights reserved.
-        </footer>
-      </div>
-    </R2NotifyProvider>
+    <BrowserRouter>
+      <R2NotifyProvider
+        serverUrl={env.r2NotifySvrUrl}
+        apiKey={apiKey}
+        autoConnect={autoConnect}
+        debug={debug}
+      >
+        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+          <Header />
+          <main className="flex-1 container mx-auto px-4 py-10">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/playground"
+                element={
+                  <PlaygroundPage
+                    autoConnect={autoConnect}
+                    setAutoConnect={setAutoConnect}
+                    debug={debug}
+                    setDebug={setDebug}
+                    apiKey={apiKey}
+                  />
+                }
+              />
+              <Route path="/api-keys" element={<ManageKeyPage />} />
+              <Route path="/api-keys/verify-email" element={<VerifyEmail />} />
+              <Route path="/api-keys/:keyId" element={<KeyDetailPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </R2NotifyProvider>
+    </BrowserRouter>
   );
 };
 

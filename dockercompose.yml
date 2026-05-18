@@ -7,9 +7,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - VITE_WS_URL=${VITE_WS_URL}
-        - VITE_WS_DEBUG=${VITE_WS_DEBUG:-false}
-        - VITE_WS_AUTO_CONNECT=${VITE_WS_AUTO_CONNECT:-true}
+        - VITE_R2_NOTIFY_SVR=${VITE_R2_NOTIFY_SVR}
+        - VITE_R2_NOTIF_DEBUG=${VITE_R2_NOTIF_DEBUG:-false}
+        - VITE_R2_NOTIFY_AUTO_CONNECT=${VITE_R2_NOTIFY_AUTO_CONNECT:-true}
+        - VITE_PLAYGROUND_API_KEY=${VITE_PLAYGROUND_API_KEY}
     ports:
       - "3000:80"
     environment:
@@ -59,8 +60,8 @@ networks:
 #       context: .
 #       dockerfile: Dockerfile.dev
 #       args:
-#         - VITE_WS_URL=ws://localhost:8081/ws
-#         - VITE_WS_DEBUG=true
+#         - VITE_R2_NOTIFY_SVR=ws://localhost:8081/ws
+#         - VITE_R2_NOTIF_DEBUG=true
 #     volumes:
 #       - ./src:/app/src
 #       - ./public:/app/public

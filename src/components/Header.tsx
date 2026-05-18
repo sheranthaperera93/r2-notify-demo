@@ -8,20 +8,21 @@ import React, {
 } from "react";
 import { NotificationCenter } from "../components/notifications/NotificationCenter";
 import { NotificationApp, NotificationMessage } from "r2-notify-client";
-import { deDuplicateAndSort, groupNotifications } from "./notifications/utils";
-import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { BellIcon as BellIconSolid } from "@heroicons/react/24/solid";
+import { NavLink } from "react-router-dom";
+import { BeakerIcon, Cog6ToothIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { useTheme } from "../context/ThemeContext";
+import { deDuplicateAndSort, groupNotifications } from "../utils/utils";
 
 export const Header: React.FC = () => {
   const [isCenterOpen, setIsCenterOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
-
   const processedNewNotificationsRef = useRef<Set<string>>(new Set());
 
-  const { listNotifications, newNotification, isConnected } =
-    useNotifications();
-
+  const { listNotifications, newNotification, isConnected } = useNotifications();
   const toggleCenter = useCallback(() => setIsCenterOpen((prev) => !prev), []);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (!Array.isArray(listNotifications)) return;
@@ -52,11 +53,19 @@ export const Header: React.FC = () => {
     return deDuplicateAndSort(notifications).length;
   }, [notifications]);
 
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
+      isActive
+        ? "bg-white/15 text-white ring-1 ring-white/20"
+        : "text-white/50 hover:text-white/80 hover:bg-white/8"
+    }`;
+
   return (
     <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0f1f10]/90 backdrop-blur-md">
-      <div className="container mx-auto px-6 h-14 flex items-center justify-between">
-        {/* Logo / Brand */}
-        <div className="flex items-center gap-2.5">
+      <div className="container mx-auto px-6 h-14 flex items-center justify-between gap-4">
+
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 ring-1 ring-emerald-500/30">
             <BellIconSolid className="w-4 h-4 text-emerald-400" />
           </div>
@@ -70,9 +79,24 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Right side controls */}
-        <div className="flex items-center gap-3">
-          {/* Connection status pill */}
+        {/* Nav tabs */}
+        <nav className="flex items-center gap-1">
+          <NavLink to="/" end className={navLinkClass}>
+            <HomeIcon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Home</span>
+          </NavLink>
+          <NavLink to="/playground" end className={navLinkClass}>
+            <BeakerIcon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Playground</span>
+          </NavLink>
+          <NavLink to="/api-keys" className={navLinkClass}>
+            <Cog6ToothIcon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">API Keys</span>
+          </NavLink>
+        </nav>
+
+        {/* Right side */}
+        <div className="flex items-center gap-2 shrink-0">
           <div
             className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-500 ${
               isConnected
@@ -88,47 +112,67 @@ export const Header: React.FC = () => {
             {isConnected ? "Live" : "Offline"}
           </div>
 
-          {/* Bell button — only when connected */}
-          {isConnected && (
+          {/* Theme toggle pill */}
+          <div className="flex items-center rounded-full ring-1 ring-white/10 bg-white/5 p-0.5">
             <button
-              onClick={toggleCenter}
-              title={
-                isCenterOpen ? "Close notifications" : "Open notifications"
-              }
-              className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
-                isCenterOpen
-                  ? "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30"
-                  : "text-white/50 hover:bg-white/8 hover:text-white/80"
+              onClick={() => theme === "dark" && toggleTheme()}
+              title="Switch to light mode"
+              className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
+                theme === "light"
+                  ? "bg-white/20 text-white"
+                  : "text-white/30 hover:text-white/60"
               }`}
             >
-              <BellIcon className="w-5 h-5" />
-              {notificationCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white leading-none">
-                  {notificationCount > 99 ? "99+" : notificationCount}
-                </span>
-              )}
+              <SunIcon className="w-3.5 h-3.5" />
             </button>
+            <button
+              onClick={() => theme === "light" && toggleTheme()}
+              title="Switch to dark mode"
+              className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
+                theme === "dark"
+                  ? "bg-white/20 text-white"
+                  : "text-white/30 hover:text-white/60"
+              }`}
+            >
+              <MoonIcon className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Bell */}
+          {isConnected && (
+            <div className="relative">
+              <button
+                onClick={toggleCenter}
+                title={isCenterOpen ? "Close notifications" : "Open notifications"}
+                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
+                  isCenterOpen
+                    ? "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30"
+                    : "text-white/50 hover:bg-white/8 hover:text-white/80"
+                }`}
+              >
+                <BellIcon className="w-5 h-5" />
+                {notificationCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white leading-none">
+                    {notificationCount > 99 ? "99+" : notificationCount}
+                  </span>
+                )}
+              </button>
+
+              {isCenterOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsCenterOpen(false)} />
+                  <div className="absolute top-10 right-0 z-50" onClick={(e) => e.stopPropagation()}>
+                    <NotificationCenter
+                      notifications={groupedNotifications}
+                      onClose={() => setIsCenterOpen(false)}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           )}
         </div>
       </div>
-
-      {/* Notification panel */}
-      {isCenterOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsCenterOpen(false)}
-        >
-          <div
-            className="absolute top-14 right-4 z-50"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <NotificationCenter
-              notifications={groupedNotifications}
-              onClose={() => setIsCenterOpen(false)}
-            />
-          </div>
-        </div>
-      )}
     </header>
   );
 };
