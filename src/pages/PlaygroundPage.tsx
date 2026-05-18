@@ -11,7 +11,7 @@ const PlaygroundPage: React.FC<{
   setDebug: (v: boolean) => void;
   apiKey: string;
 }> = ({ autoConnect, setAutoConnect, debug, setDebug, apiKey }) => (
-  <div className="max-w-2xl mx-auto space-y-6">
+  <div className="max-w-4xl mx-auto space-y-6">
     <div className="space-y-1 pb-2">
       <h1 className="text-xl font-semibold text-gray-800 dark:text-white/90 tracking-tight">
         Playground

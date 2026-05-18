@@ -190,7 +190,7 @@ export const LandingPage: React.FC = () => {
             <span className="text-emerald-400">done right</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-base sm:text-lg text-white/50 max-w-4xl mx-auto leading-relaxed mb-10">
             R2-Notify is a modular, three-layer notification platform built on
             WebSockets. One server, one client library, one React wrapper —
             deployable anywhere, integrable with anything.
@@ -522,7 +522,7 @@ export const LandingPage: React.FC = () => {
       {/* ── CTA ── */}
       <section className="bg-[#0a1a0b] py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_100%,rgba(74,222,128,0.07),transparent)]" />
-        <div className="relative container mx-auto px-6 max-w-2xl text-center space-y-6">
+        <div className="relative container mx-auto px-6 max-w-4xl text-center space-y-6">
           <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/15 ring-1 ring-emerald-500/25 mx-auto">
             <BellIcon className="w-6 h-6 text-emerald-400" />
           </div>

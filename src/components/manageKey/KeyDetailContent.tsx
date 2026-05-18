@@ -109,7 +109,7 @@ export const KeyDetailContent: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto flex flex-col items-center gap-3 py-20">
+      <div className="max-w-4xl mx-auto flex flex-col items-center gap-3 py-20">
         <Spinner />
         <p className="text-sm text-gray-400 dark:text-white/30">
           Loading key details…
@@ -120,7 +120,7 @@ export const KeyDetailContent: React.FC = () => {
 
   if (error && !key) {
     return (
-      <div className="max-w-2xl mx-auto space-y-4">
+      <div className="max-w-4xl mx-auto space-y-4">
         <button
           onClick={() => navigate("/api-keys")}
           className="flex items-center gap-1.5 text-sm text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 transition-colors"
@@ -138,7 +138,7 @@ export const KeyDetailContent: React.FC = () => {
   if (!key) return null;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Back nav */}
       <button
         onClick={() => navigate("/api-keys")}
